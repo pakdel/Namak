@@ -1,16 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.amirpakdel.namak"
+        applicationId "com.amirpakdel.test01"
         minSdkVersion 19
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -19,7 +20,14 @@ android {
     }
 }
 
+// Volley
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.android.support:support-v4:22.1.0'
+    compile 'com.mcxiaoke.volley:library:1.0.6'
 }
