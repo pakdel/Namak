@@ -1,34 +1,22 @@
 <resources>
-
-
     <string name="title_activity_settings">Settings</string>
 
     <string name="pref_title_master">Salt Master address</string>
-    <string name="pref_default_master">http://salt.saltstack.com/</string>
+    <string name="pref_default_dashboard" translatable="false">static/dashboard.json</string>
+    <string name="pref_title_dashboard">Dashboard location</string>
+    <string name="pref_default_master" translatable="false">http://salt.saltstack.com/</string>
+    <string name="pref_title_eauth">Authentication Backend</string>
+    <string name="pref_default_eauth" translatable="false">auto</string>
+    <string-array name="pref_eauth_entries">
+        <item>auto</item>
+        <item>ldap</item>
+        <item>pam</item>
+    </string-array>
     <string name="pref_title_username">Username</string>
-    <string name="pref_default_username">admin</string>
+    <string name="pref_default_username" translatable="false">admin</string>
     <string name="pref_title_password">Password</string>
-    <string name="pref_default_password">admin</string>
-
-    <!--<string name="pref_header_general">General</string>-->
-
-    <!--<string name="pref_title_social_recommendations">Enable social recommendations</string>-->
-    <!--<string name="pref_description_social_recommendations">Recommendations for people to contact-->
-    <!--based on your message history-->
-    <!--</string>-->
-
-    <!--<string name="pref_title_display_name">Display name</string>-->
-    <!--<string name="pref_default_display_name">John Smith</string>-->
-
-    <!--<string name="pref_title_add_friends_to_messages">Add friends to messages</string>-->
-    <!--<string-array name="pref_example_list_titles">-->
-    <!--<item>Always</item>-->
-    <!--<item>When possible</item>-->
-    <!--<item>Never</item>-->
-    <!--</string-array>-->
-    <!--<string-array name="pref_example_list_values">-->
-    <!--<item>1</item>-->
-    <!--<item>0</item>-->
-    <!--<item>-1</item>-->
-    <!--</string-array>-->
+    <string name="pref_default_password" translatable="false">admin</string>
+    <string name="pref_title_auto_execute">Auto-execute</string>
+    <string name="pref_summary_auto_execute">Execute the command as soon as it is selected</string>
+    <string name="pref_title_timeout" translatable="false">Timeout</string>
 </resources>

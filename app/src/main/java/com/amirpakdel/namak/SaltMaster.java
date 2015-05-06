@@ -3,34 +3,43 @@ package com.amirpakdel.namak;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class SaltMaster {
-    /**
-     * Created by pakdel@gmail.com on 23/04/15.
-     */
-    private String mBaseUrl;
-    private String mUsername;
-    private String mPassword;
-    private String mAuthToken;
-
-    private JSONObject mDashboard;
     //    private DashboardListener dashboardListener = null;
     // Currently we have 2 DashboardListeners:
     // - NamakApplication which updates dashboardListAdapter
     // - MainActivity which stops the refreshing animation (setRefreshing false)
-    private ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(2);
+    private final ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(2);
+    /**
+     * Created by pakdel@gmail.com on 23/04/15.
+     */
+    private String mBaseUrl;
+    private String mDashboardUrl;
+    private String mUsername;
+    private String mEauth;
+    private String mPassword;
+    private int mTimeout;
+    private String mAuthToken;
+    private JSONObject mDashboard;
 
-    public SaltMaster(String baseUrl, String username, String password, DashboardListener dashboardListener) {
+    public SaltMaster(String baseUrl, String dashboardUrl, String eauth, String username, String password, int timeout, DashboardListener dashboardListener) {
         this.mBaseUrl = baseUrl;
+        this.mDashboardUrl = dashboardUrl;
+        this.mEauth = eauth;
         this.mUsername = username;
         this.mPassword = password;
+        this.mTimeout = timeout;
 //        this.mDashboardListeners.clear();
         this.mDashboardListeners.add(dashboardListener);
         this.mAuthToken = null;
@@ -50,7 +59,7 @@ public class SaltMaster {
         JSONObject loginPayload = new JSONObject();
 
         try {
-            loginPayload.put("eauth", "ldap");
+            loginPayload.put("eauth", mEauth);
             loginPayload.put("username", mUsername);
             loginPayload.put("password", mPassword);
         } catch (JSONException error) {
@@ -88,7 +97,7 @@ public class SaltMaster {
             Toast.makeText(NamakApplication.getAppContext(), "Not logged in!", Toast.LENGTH_SHORT).show();
             return;
         }
-        SaltRequest dashboardRequest = new SaltRequest(this, "static/dashboard.json", null,
+        JsonObjectRequest dashboardRequest = new JsonObjectRequest(getDashboardFullUrl(mDashboardUrl), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -113,23 +122,50 @@ public class SaltMaster {
                         triggerDashboardListeners();
                     }
                 });
+        // To set or not to set the timeout, that is the question
+        dashboardRequest.setRetryPolicy(new DefaultRetryPolicy(mTimeout * 1000, 1, 1.0f));
         NamakApplication.addToVolleyRequestQueue(dashboardRequest);
-
     }
 
     public String getBaseUrl() {
         return mBaseUrl;
     }
 
-    public void setBaseUrl(String mBaseUrl) {
-        this.mBaseUrl = mBaseUrl;
+    public void setBaseUrl(String baseUrl) {
+        this.mBaseUrl = baseUrl;
         this.login();
     }
 
+    private String getDashboardFullUrl(String dashboardUrl) {
+        try {
+            return new URL(dashboardUrl).toString();
+        } catch (MalformedURLException e) {
+            // It's fine if dashboardUrl is not a full URL
+//            Log.e("SaltMaster: dashboard", dashboardUrl + " is not a URL", e);
+        }
+        try {
+            return new URL(new URL(mBaseUrl), dashboardUrl).toString();
+        } catch (MalformedURLException e) {
+            Log.e("SaltMaster: dashboard", mBaseUrl + " is not a URL", e);
+        }
+        return mBaseUrl + dashboardUrl;
+    }
+//    public String getDashboardUrl() { return mDashboardUrl; }
+    public void setDashboardUrl(String dashboardUrl) {
+        this.mDashboardUrl = dashboardUrl;
+        this.loadDashboard();
+    }
+
+    //    public String getEauth() { return mEauth; }
     //    public String getUsername() { return mUsername; }
-//    public String getPassword() { return mPassword; }
+    //    public String getPassword() { return mPassword; }
     public String getAuthToken() {
         return mAuthToken;
+    }
+
+    public void setEauth(String eauth) {
+        this.mEauth = eauth;
+        this.login();
     }
 
     public void setUsername(String username) {
@@ -137,9 +173,17 @@ public class SaltMaster {
         this.login();
     }
 
-    public void setPassword(String mPassword) {
-        this.mPassword = mPassword;
+    public void setPassword(String password) {
+        this.mPassword = password;
         this.login();
+    }
+
+    public int getTimeout() {
+        return mTimeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.mTimeout = timeout;
     }
 
     //    public void setAuthToken(String mAuthToken) { this.mAuthToken = mAuthToken; }

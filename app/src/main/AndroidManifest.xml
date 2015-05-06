@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amirpakdel.namak"
-    android:versionCode="1"
-    android:versionName="1.0">
+    package="com.amirpakdel.namak">
 
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="21" />
+    <!--Not used; it is always overridden by the value specified in the Gradle build script-->
+    <!--android:versionCode="1"-->
+    <!--android:versionName="1.0">-->
+
+    <!--Not used; it is always overridden by the value specified in the Gradle build script-->
+    <!--<uses-sdk-->
+    <!--android:minSdkVersion="19"-->
+    <!--android:targetSdkVersion="22" />-->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -39,7 +42,12 @@
         </activity>
         <activity
             android:name=".CommandExecutionActivity"
-            android:label="@string/title_activity_command_execution" />
+            android:label="@string/title_activity_command_execution"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.amirpakdel.namak.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -12,6 +12,23 @@
 
     <EditTextPreference
         android:capitalize="words"
+        android:defaultValue="@string/pref_default_dashboard"
+        android:inputType="textNoSuggestions"
+        android:key="dashboard"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_dashboard" />
+
+    <ListPreference
+        android:defaultValue="@string/pref_default_eauth"
+        android:key="eauth"
+        android:title="@string/pref_title_eauth"
+        android:entries="@array/pref_eauth_entries"
+        android:entryValues="@array/pref_eauth_entries" />
+
+    <EditTextPreference
+        android:capitalize="words"
         android:defaultValue="@string/pref_default_username"
         android:inputType="textNoSuggestions"
         android:key="username"
@@ -30,4 +47,14 @@
         android:singleLine="true"
         android:title="@string/pref_title_password" />
 
+    <com.amirpakdel.namak.TimeoutPreference
+        android:key="timeout"
+        android:max="1800"
+        android:title="@string/pref_title_timeout" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="auto_execute"
+        android:summary="@string/pref_summary_auto_execute"
+        android:title="@string/pref_title_auto_execute" />
 </PreferenceScreen>

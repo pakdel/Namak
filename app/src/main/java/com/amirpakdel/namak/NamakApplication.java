@@ -21,7 +21,10 @@ public class NamakApplication extends android.app.Application
     // Caution: The preference manager does not currently store a strong reference to the listener.
     // You must store a strong reference to the listener, or it will be susceptible to garbage collection.
     // We recommend you keep a reference to the listener in the instance data of an object that will exist as long as you need the listener.
+    @SuppressWarnings("FieldCanBeLocal")
     private static SharedPreferences.OnSharedPreferenceChangeListener prefChanged;
+
+    private static boolean mAutoExecute;
     private static SaltMaster sm;
     private static RequestQueue queue;
     private static JSONObject dashboard;
@@ -53,6 +56,10 @@ public class NamakApplication extends android.app.Application
         return dashboard.getJSONObject(dashboardListAdapter.getItem(dashboardItemPosition));
     }
 
+    public static boolean getAutoExecute() {
+        return mAutoExecute;
+    }
+
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
@@ -63,25 +70,35 @@ public class NamakApplication extends android.app.Application
 //      PreferenceManager.setDefaultValues(this, R.xml.pref, true);
         PreferenceManager.setDefaultValues(NamakApplication.context, R.xml.pref, false);
 
+        mAutoExecute = pref.getBoolean("auto_execute", false);
 
         // Volley
         queue = Volley.newRequestQueue(context);
 
         sm = new SaltMaster(
                 pref.getString("master", getString(R.string.pref_default_master)),
+                pref.getString("dashboard", getString(R.string.pref_default_dashboard)),
+                pref.getString("eauth", getString(R.string.pref_default_eauth)),
                 pref.getString("username", getString(R.string.pref_default_username)),
                 pref.getString("password", getString(R.string.pref_default_password)),
+                pref.getInt("timeout", TimeoutPreference.DEFAULT_TIMEOUT),
                 this
         );
 
         prefChanged = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-                // Assert cm is not null
+                assert sm != null;
                 Log.d("prefChanged", "Updating " + s);
                 switch (s) {
                     case "master":
                         sm.setBaseUrl(pref.getString("master", getString(R.string.pref_default_master)));
+                        break;
+                    case "dashboard":
+                        sm.setDashboardUrl(pref.getString("dashboard", getString(R.string.pref_default_dashboard)));
+                        break;
+                    case "eauth":
+                        sm.setEauth(pref.getString("eauth", getString(R.string.pref_default_eauth)));
                         break;
                     case "username":
                         sm.setUsername(pref.getString("username", getString(R.string.pref_default_username)));
@@ -89,8 +106,14 @@ public class NamakApplication extends android.app.Application
                     case "password":
                         sm.setPassword(pref.getString("password", getString(R.string.pref_default_password)));
                         break;
+                    case "timeout":
+                        sm.setTimeout(pref.getInt("timeout", TimeoutPreference.DEFAULT_TIMEOUT));
+                        break;
+                    case "auto_execute":
+                        mAutoExecute = pref.getBoolean("auto_execute", false);
+                        break;
                     default:
-                        Log.e("prefChanged", s + " is not a know preference!");
+                        Log.e("prefChanged", s + " is not a know preference: " + pref.getString(s, "Failed to get " + s));
                 }
             }
         };
