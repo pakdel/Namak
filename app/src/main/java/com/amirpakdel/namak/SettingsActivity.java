@@ -1,15 +1,16 @@
 package com.amirpakdel.namak;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-public class SettingsActivity extends Activity {
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+public class SettingsActivity extends AppCompatActivity {
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             preference.setSummary(value.toString());
@@ -18,8 +19,7 @@ public class SettingsActivity extends Activity {
     };
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
-        preference
-                .setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
         sBindPreferenceSummaryToValueListener.onPreferenceChange(
                 preference,
                 PreferenceManager.getDefaultSharedPreferences(
@@ -31,7 +31,8 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new GeneralPreferenceFragment())
@@ -56,18 +57,20 @@ public class SettingsActivity extends Activity {
 
 
             bindPreferenceSummaryToValue(findPreference("master"));
+            bindPreferenceSummaryToValue(findPreference("dashboard"));
+            ListPreference eauthPreference = (ListPreference) findPreference("eauth");
+            bindPreferenceSummaryToValue(eauthPreference);
+//            eauthPreference.setEntryValues(new String[]{"auto", "ldap", "pam"});
             bindPreferenceSummaryToValue(findPreference("username"));
             Preference passwordPreference = findPreference("password");
-            passwordPreference
-                    .setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                        @Override
-                        public boolean onPreferenceChange(Preference preference, Object value) {
-                            preference.setSummary("****************");
-                            return true;
-                        }
-                    });
+            passwordPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object value) {
+                    preference.setSummary("****************");
+                    return true;
+                }
+            });
             passwordPreference.setSummary("****************");
-
         }
     }
 }

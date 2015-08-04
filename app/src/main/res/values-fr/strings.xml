@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Namak</string>
+    <string name="action_settings">"Paramètres"</string>
+    <string name="drawer_close">Ouvrir le Drawer</string>
+    <string name="drawer_open">Fermer le Drawer</string>
+    <string name="pref_summary_auto_execute">"Exécutez la commande dès qu'il est sélectionné"</string>
+    <string name="pref_title_auto_execute">"Exécution automatique"</string>
+    <string name="pref_title_eauth">"Backend d'authentification"</string>
+    <string-array name="pref_eauth_entries">
+        <item>auto</item>
+        <item>ldap</item>
+        <item>pam</item>
+    </string-array>
+    <string name="pref_title_dashboard">Lieu de Dashboard</string>
+    <string name="pref_title_password">Mot de passe</string>
+    <string name="pref_title_master">"L'adresse de Salt Master"</string>
+    <string name="pref_title_username">"Nom d'utilisateur"</string>
+    <string name="title_activity_command_execution">"Eexécution de commande"</string>
+    <string name="title_activity_settings">Paramètres</string>
+</resources>

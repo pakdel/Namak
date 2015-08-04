@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mainActivity = this;
         setTitle(R.string.app_name);
 
@@ -56,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         ListView mDrawerListView = new ListView(this);
+        // TODO use the following when the rest of the drawer items are implemented
+        // When setting CHOICE_MODE_SINGLE, ListView will automatically
+        // give items the 'activated' state when touched.
+        // mDrawerListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -76,7 +82,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         getString(R.string.title_runners),
                         getString(R.string.title_wheels),
                 }));
-        DrawerLayout.LayoutParams drawerListViewParams = new DrawerLayout.LayoutParams(400, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START);
+
+        DrawerLayout.LayoutParams drawerListViewParams = new DrawerLayout.LayoutParams(
+                (int) getResources().getDimension(R.dimen.navigation_drawer_width),
+                ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START);
         mDrawerListView.setLayoutParams(drawerListViewParams);
         mDrawerListView.setBackgroundColor(Color.WHITE);
 
@@ -103,11 +112,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mDrawerLayout.addView(mSwipeRefreshLayout);
         mDrawerLayout.addView(mDrawerListView);
 
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
-//        getActionBar().setHomeButtonEnabled(true);
-        // FIXME
-        //noinspection ConstantConditions
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(mDrawerLayout);
     }
 
