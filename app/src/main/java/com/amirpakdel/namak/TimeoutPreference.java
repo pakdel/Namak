@@ -29,8 +29,13 @@ public class TimeoutPreference extends DialogPreference implements SeekBar.OnSee
         super(context, attrs);
         mContext = context;
 
-        mMax = attrs.getAttributeIntValue(androidns, "max", 3600);
-        mDefault = attrs.getAttributeIntValue(androidns, "defaultValue", DEFAULT_TIMEOUT);
+        if (attrs == null) {
+            mMax = 3600;
+            mDefault = DEFAULT_TIMEOUT;
+        } else {
+            mMax = attrs.getAttributeIntValue(androidns, "max", 3600);
+            mDefault = attrs.getAttributeIntValue(androidns, "defaultValue", DEFAULT_TIMEOUT);
+        }
         setValue(mDefault);
     }
 

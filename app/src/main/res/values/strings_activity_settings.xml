@@ -1,22 +1,42 @@
 <resources>
     <string name="title_activity_settings">Settings</string>
 
-    <string name="pref_title_master">Salt Master address</string>
-    <string name="pref_default_dashboard" translatable="false">static/dashboard.json</string>
-    <string name="pref_title_dashboard">Dashboard location</string>
-    <string name="pref_default_master" translatable="false">http://salt.saltstack.com/</string>
-    <string name="pref_title_eauth">Authentication Backend</string>
-    <string name="pref_default_eauth" translatable="false">auto</string>
-    <string-array name="pref_eauth_entries">
+    <string name="pref_master_category_title">Salt Masters</string>
+    <string name="pref_master_add_title">Add Salt Master</string>
+    <string name="pref_master_name_title">Name</string>
+    <!-- pref_default_master_name: one decimal number that is the Salt Master number -->
+    <string name="pref_master_name_default">Salt Master #%d (no name yet)</string>
+    <string name="pref_master_url_title">URL</string>
+    <!--<string name="pref_master_url_default">https://salt:8000/</string>-->
+    <string name="pref_master_username_title">Username</string>
+    <!--<string name="pref_master_username_default">admin</string>-->
+    <string name="pref_master_password_title">Password</string>
+    <!--<string name="pref_master_password_default">password/</string>-->
+    <string name="pref_master_eauth_title">Authentication Backend</string>
+    <!--<string name="pref_master_eauth_default" translatable="false">auto</string>-->
+    <string-array name="pref_master_eauth_entries">
         <item>auto</item>
         <item>ldap</item>
         <item>pam</item>
     </string-array>
-    <string name="pref_title_username">Username</string>
-    <string name="pref_default_username" translatable="false">admin</string>
-    <string name="pref_title_password">Password</string>
-    <string name="pref_default_password" translatable="false">admin</string>
-    <string name="pref_title_auto_execute">Auto-execute</string>
-    <string name="pref_summary_auto_execute">Execute the command as soon as it is selected</string>
-    <string name="pref_title_timeout" translatable="false">Timeout</string>
+    <string name="pref_master_remove_title">Remove Salt Master</string>
+    <!-- pref_master_remove_message: one string that is the Salt Master name -->
+    <string name="pref_master_remove_message">Are you sure you want to remove "%s"?</string>
+
+    <string name="pref_dashboard_category_title">Dashboards</string>
+    <string name="pref_dashboard_add_title">Add Dashboard</string>
+    <string name="pref_dashboard_name_title">Name</string>
+    <!-- pref_default_dashboard_name: one decimal number that is the Salt Master number -->
+    <string name="pref_dashboard_name_default">Dashboard #%d (no name yet)</string>
+    <string name="pref_dashboard_url_title">URL</string>
+    <!--<string name="pref_dashboard_url_default">https://salt:8000/</string>-->
+    <string name="pref_dashboard_remove_title">Remove Dashboard</string>
+    <!-- pref_dashboard_remove_message: one string that is the Salt Master name -->
+    <string name="pref_dashboard_remove_message">Are you sure you want to remove "%s"?</string>
+
+    <string name="pref_misc_category_title">Miscellaneous</string>
+    <string name="pref_timeout_title" translatable="false">Timeout</string>
+    <string name="pref_auto_execute_title">Auto-execute</string>
+    <string name="pref_auto_execute_summary">Execute the command as soon as it is selected</string>
+
 </resources>
