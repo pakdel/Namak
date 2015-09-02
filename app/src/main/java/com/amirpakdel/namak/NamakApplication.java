@@ -103,7 +103,7 @@ public class NamakApplication extends android.app.Application {
         // DEBUG
 //      PreferenceManager.getDefaultSharedPreferences(this).edit().clear().commit();
 //      PreferenceManager.setDefaultValues(this, R.xml.pref, true);
-        PreferenceManager.setDefaultValues(NamakApplication.context, R.xml.pref, false);
+//        PreferenceManager.setDefaultValues(NamakApplication.context, R.xml.pref, false);
 
         mAutoExecute = pref.getBoolean("auto_execute", false);
 
