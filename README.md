@@ -15,6 +15,7 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 - Should we just increase SaltMaster pref no., instead of finding holes in the sequence?
 
 ## TODO
+- Update Screenshots on Google Play
 - Load old (previous) style of preferences as the default
 - Dashboards
     - can be absolute or relative
