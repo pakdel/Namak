@@ -15,7 +15,7 @@ import java.util.List;
 public class DashboardListAdapter extends BaseAdapter {
 
     private final Context context;
-    private final List<String> dashboardList = new ArrayList<>(20);
+    private final List<String> dashboardTitleList = new ArrayList<>(20);
     private final int horizontal_padding, horizontal_padding_large, vertical_padding;
 
     public DashboardListAdapter(final Context context) {
@@ -28,22 +28,22 @@ public class DashboardListAdapter extends BaseAdapter {
     }
 
     public void add(String dashboardItem) {
-        dashboardList.add(dashboardItem);
+        dashboardTitleList.add(dashboardItem);
         notifyDataSetChanged();
     }
 
     public void clear() {
-        dashboardList.clear();
+        dashboardTitleList.clear();
     }
 
     @Override
     public int getCount() {
-        return dashboardList.size();
+        return dashboardTitleList.size();
     }
 
     @Override
     public String getItem(int position) {
-        return dashboardList.get(position);
+        return dashboardTitleList.get(position);
     }
 
     @Override

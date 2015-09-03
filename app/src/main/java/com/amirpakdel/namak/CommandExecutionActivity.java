@@ -52,7 +52,6 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
 
 
     private void prepareCommand() {
-
         try {
             mJSONCommand = NamakApplication.getDashboardItem(getIntent().getExtras().getInt(COMMAND_ITEM_POSITION));
         } catch (JSONException error) {
@@ -97,7 +96,6 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             mJSONCommand = null;
             // return;
         }
-
     }
 
     private void setupViews() {
