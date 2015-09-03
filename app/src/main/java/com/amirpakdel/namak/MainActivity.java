@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NamakApplication.DashboardListener {
+public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, NamakApplication.DashboardListener {
 
     private ListView mDrawerListView;
     private void setSaltMasterNames() {
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //noinspection ConstantConditions
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         mainActivity = this;
         setTitle(R.string.app_name);
 
@@ -89,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
 //                supportInvalidateOptionsMenu();
-                setTitle(R.string.title_dashboard);
+                setTitle(NamakApplication.getSaltMaster().getName());
             }
 
             public void onDrawerOpened(View drawerView) {
@@ -154,8 +152,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
-        // Default, and the only implemented feature, is Dashboard
-        setTitle(R.string.title_dashboard);
+        setTitle(NamakApplication.getSaltMaster().getName());
     }
 
     @Override

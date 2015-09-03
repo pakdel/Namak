@@ -25,6 +25,7 @@ public class SaltMaster {
      */
     private int mTimeout;
     private String mId;
+    private String mName;
     private String mBaseUrl;
     private String mUsername;
     private String mPassword;
@@ -35,6 +36,7 @@ public class SaltMaster {
         this.mTimeout = timeout;
         this.mId = null;
 
+        this.mName = null;
         this.mBaseUrl = null;
         this.mUsername = null;
         this.mPassword = null;
@@ -56,8 +58,8 @@ public class SaltMaster {
     public void login() {
 
         SharedPreferences pref = NamakApplication.getPref();
-        Context context = NamakApplication.getAppContext();
 
+        this.mName = pref.getString("saltmaster_" + mId + "_name", null);
         this.mBaseUrl = pref.getString("saltmaster_" + mId + "_url", null);
         this.mUsername = pref.getString("saltmaster_" + mId + "_username", null);
         this.mPassword = pref.getString("saltmaster_" + mId + "_password", null);
@@ -65,7 +67,7 @@ public class SaltMaster {
 
         this.mAuthToken = null;
 
-        Toast.makeText(NamakApplication.getAppContext(), "Logging into " + mBaseUrl + " as " + mUsername, Toast.LENGTH_SHORT).show();
+        Toast.makeText(NamakApplication.getAppContext(), "Logging into " + mName + " (" + mBaseUrl + ") as " + mUsername, Toast.LENGTH_SHORT).show();
         JSONObject loginPayload = new JSONObject();
 
         try {
@@ -118,6 +120,13 @@ public class SaltMaster {
     public String getAuthToken() {
         return mAuthToken;
     }
+    public String getName() {
+        if (mAuthToken == null) {
+            return NamakApplication.getAppContext().getString(R.string.not_logged_in);
+        };
+        return mName;
+    }
+
 
     public String getBaseUrl() {
         return mBaseUrl;
