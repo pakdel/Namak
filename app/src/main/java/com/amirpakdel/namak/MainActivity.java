@@ -2,12 +2,12 @@ package com.amirpakdel.namak;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,10 +18,51 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
 
+public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, NamakApplication.DashboardListener {
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, SaltMaster.DashboardListener {
+    private ListView mDrawerListView;
+    private void setSaltMasterNames() {
+        mDrawerListView.setAdapter(new ArrayAdapter<>(
+                mainActivity,
+                android.R.layout.simple_list_item_activated_1,
+                android.R.id.text1,
+
+                // FIXME needs to be rloaded after a Pref Change
+                NamakApplication.getSaltmasterNames()
+        ));
+        int position = NamakApplication.getSaltMasterIndex();
+        if (position >= 0) {
+            mDrawerListView.setSelection(position);
+            mDrawerListView.setItemChecked(position, true);
+        }
+    }
+    // Caution: The preference manager does not currently store a strong reference to the listener.
+    // You must store a strong reference to the listener, or it will be susceptible to garbage collection.
+    // We recommend you keep a reference to the listener in the instance data of an object that will exist as long as you need the listener.
+    @SuppressWarnings("FieldCanBeLocal")
+//    private static SharedPreferences.OnSharedPreferenceChangeListener prefChanged;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+//                Log.e("GeneralPref", key + " changed");
+            if(key.startsWith("saltmasters") || (key.startsWith("saltmaster_") && key.endsWith("_name"))) {
+                setSaltMasterNames();
+            }
+        }
+    };
+    @Override
+    public void onResume() {
+        super.onResume();
+        NamakApplication.getPref().registerOnSharedPreferenceChangeListener(listener);
+        setSaltMasterNames();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        NamakApplication.getPref().unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -31,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //noinspection ConstantConditions
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         mainActivity = this;
         setTitle(R.string.app_name);
 
@@ -46,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
 //                supportInvalidateOptionsMenu();
-                setTitle(R.string.title_dashboard);
+                setTitle(NamakApplication.getSaltMaster().getName());
             }
 
             public void onDrawerOpened(View drawerView) {
@@ -57,31 +98,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        ListView mDrawerListView = new ListView(this);
+        mDrawerListView = new ListView(this);
         // TODO use the following when the rest of the drawer items are implemented
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
-        // mDrawerListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        mDrawerListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mDrawerLayout.closeDrawers();
-                if (position != 0) {
-                    Toast.makeText(mainActivity, "Section " + position + " is not implemented yet.", Toast.LENGTH_SHORT).show();
-                }
+                NamakApplication.getSaltMaster().setId(NamakApplication.getSaltMasterId(position));
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<>(
-                mainActivity,
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_dashboard),
-                        getString(R.string.title_minions),
-                        getString(R.string.title_cloud),
-                        getString(R.string.title_runners),
-                        getString(R.string.title_wheels),
-                }));
 
         DrawerLayout.LayoutParams drawerListViewParams = new DrawerLayout.LayoutParams(
                 (int) getResources().getDimension(R.dimen.navigation_drawer_width),
@@ -95,6 +123,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mainView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(NamakApplication.getSaltMaster().getAuthToken() == null) {
+                    Toast.makeText(NamakApplication.getAppContext(), "Not logged into any Salt Master!", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Intent intent = new Intent(mainActivity, CommandExecutionActivity.class);
                 intent.putExtra(CommandExecutionActivity.COMMAND_ITEM_POSITION, position);
                 startActivity(intent);
@@ -107,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout.setEnabled(true);
 //        mSwipeRefreshLayout.setRefreshing(false);
         mSwipeRefreshLayout.addView(mainView);
-        NamakApplication.getSaltMaster().addDashboardListener(this);
+        NamakApplication.addDashboardListener(this);
 
         mDrawerLayout.addView(mSwipeRefreshLayout);
         mDrawerLayout.addView(mDrawerListView);
@@ -120,8 +152,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
-        // Default, and the only implemented feature, is Dashboard
-        setTitle(R.string.title_dashboard);
+        setTitle(NamakApplication.getSaltMaster().getName());
     }
 
     @Override
@@ -149,11 +180,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        NamakApplication.getSaltMaster().loadDashboard();
+        NamakApplication.reloadDashboards();
     }
 
     @Override
-    public void onDashboardLoadFinished(JSONObject dashboard) {
+    public void onDashboardLoadFinished() {
         mSwipeRefreshLayout.setRefreshing(false);
     }
 }

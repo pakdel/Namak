@@ -1,5 +1,6 @@
 package com.amirpakdel.namak;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -7,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -29,7 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class CommandExecutionActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class CommandExecutionActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String COMMAND_ITEM_POSITION = "command_position";
     private JSONObject mJSONCommand;
@@ -45,14 +45,13 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //noinspection ConstantConditions
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         prepareCommand();
         setupViews();
     }
 
 
     private void prepareCommand() {
-
         try {
             mJSONCommand = NamakApplication.getDashboardItem(getIntent().getExtras().getInt(COMMAND_ITEM_POSITION));
         } catch (JSONException error) {
@@ -97,7 +96,6 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             mJSONCommand = null;
             // return;
         }
-
     }
 
     private void setupViews() {

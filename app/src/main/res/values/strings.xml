@@ -1,10 +1,9 @@
 <resources>
-    <string name="app_name">Namak</string>
+    <string name="app_name" translatable="false">Namak</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
 
-
-    <string name="title_dashboard" translatable="false">Dashboard</string>
+    <string name="not_logged_in">Not logged in</string>
     <string name="title_minions" translatable="false">Minions</string>
     <string name="title_cloud" translatable="false">Cloud</string>
     <string name="title_runners" translatable="false">Runners</string>
@@ -12,4 +11,9 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_command_execution">Command Execution</string>
+
+    <string name="dashboard_item_title" formatted="false">execution of %fun$s on %tgt$s with [no arguments | following arguments: %arg$s]</string>
+
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 </resources>
