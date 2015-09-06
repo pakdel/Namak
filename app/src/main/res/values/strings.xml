@@ -3,7 +3,7 @@
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
 
-    <string name="not_logged_in">Not logged into any Salt Master</string>
+    <string name="not_logged_in">Not logged in</string>
     <string name="title_minions" translatable="false">Minions</string>
     <string name="title_cloud" translatable="false">Cloud</string>
     <string name="title_runners" translatable="false">Runners</string>

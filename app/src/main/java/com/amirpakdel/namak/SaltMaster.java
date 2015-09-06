@@ -1,6 +1,5 @@
 package com.amirpakdel.namak;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
