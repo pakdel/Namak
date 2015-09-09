@@ -33,5 +33,8 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
     - use onPreferenceChangeListener
 
 - Ask for Garbage Collection while waiting for network
+- onDestroy: log out
 - Re-Implement relative dashboard URL:
     - Relative Dashboards need to be reloaded by switching to another Salt Master
+- Testing:
+    - permissions
