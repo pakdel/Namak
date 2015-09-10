@@ -1,6 +1,5 @@
 package com.amirpakdel.namak;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +14,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,8 @@ import android.view.ViewGroup;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SettingsActivity extends Activity {
+//public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
     private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
@@ -43,7 +45,7 @@ public class SettingsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new NamakPreferenceFragment())
@@ -80,14 +82,17 @@ public class SettingsActivity extends Activity {
         @Override
         public void onResume() {
             super.onResume();
-            getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
+//            getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
+            NamakApplication.getPref().registerOnSharedPreferenceChangeListener(listener);
             recreateSaltMasterList();
+            recreateDashboardList();
         }
 
         @Override
         public void onPause() {
             super.onPause();
-            getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
+//            getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
+            NamakApplication.getPref().unregisterOnSharedPreferenceChangeListener(listener);
         }
 
         private SharedPreferences prefs;
@@ -115,7 +120,8 @@ public class SettingsActivity extends Activity {
             addSaltMaster.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     // Find the next ID
-                    Set<String> saltmasters = prefs.getStringSet("saltmasters", new HashSet<String>());
+                    // https://code.google.com/p/android/issues/detail?id=27801
+                    Set<String> saltmasters = new HashSet<>(prefs.getStringSet("saltmasters", new HashSet<String>()));
                     int nextSaltmaster = 1;
                     while (saltmasters.contains(String.valueOf(nextSaltmaster))) {
                         nextSaltmaster += 1;
@@ -189,11 +195,12 @@ public class SettingsActivity extends Activity {
                             .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Set<String> saltmasters = prefs.getStringSet("saltmasters", new HashSet<String>());
+                                    // https://code.google.com/p/android/issues/detail?id=27801
+                                    Set<String> saltmasters = new HashSet<>(prefs.getStringSet("saltmasters", new HashSet<String>()));
                                     saltmasters.remove(saltmaster);
                                     SharedPreferences.Editor edit = prefs.edit();
                                     edit.putStringSet("saltmasters", saltmasters);
-                                    // TODO Clear other configuratios as well
+                                    // TODO Clear other configurations as well
                                     edit.apply();
 //                                    edit.commit();
                                     recreateSaltMasterList();
@@ -223,7 +230,8 @@ public class SettingsActivity extends Activity {
             addDashboard.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     // Find the next ID
-                    Set<String> dashboards = prefs.getStringSet("dashboards", new HashSet<String>());
+                    // https://code.google.com/p/android/issues/detail?id=27801
+                    Set<String> dashboards = new HashSet<>(prefs.getStringSet("dashboards", new HashSet<String>()));
                     int nextDashboard = 1;
                     while (dashboards.contains(String.valueOf(nextDashboard))) {
                         nextDashboard += 1;
@@ -277,12 +285,12 @@ public class SettingsActivity extends Activity {
                             .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Set<String> dashboards = prefs.getStringSet("dashboards", new HashSet<String>());
+                                    // https://code.google.com/p/android/issues/detail?id=27801
+                                    Set<String> dashboards = new HashSet<>(prefs.getStringSet("dashboards", new HashSet<String>()));
                                     dashboards.remove(dashboard);
-
                                     SharedPreferences.Editor edit = prefs.edit();
                                     edit.putStringSet("dashboards", dashboards);
-                                    // TODO Clear other configuratios as well
+                                    // TODO Clear other configurations as well
                                     edit.apply();
 //                                    edit.commit();
                                     recreateDashboardList();
@@ -303,7 +311,8 @@ public class SettingsActivity extends Activity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            prefs = getPreferenceManager().getSharedPreferences();
+//            prefs = getPreferenceManager().getSharedPreferences();
+            prefs = NamakApplication.getPref();
 
             PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
 
@@ -327,6 +336,7 @@ public class SettingsActivity extends Activity {
 
             TimeoutPreference timeout = new TimeoutPreference(getActivity(), null);
             timeout.setTitle(getString(R.string.pref_timeout_title));
+            timeout.setSummary(getString(R.string.pref_timeout_summary));
             timeout.setKey("timeout");
             miscCategory.addPreference(timeout);
 

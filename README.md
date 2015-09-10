@@ -3,6 +3,7 @@ Salt Net API client
 
 Sample Dashboard: https://www.dropbox.com/s/vs4q2jfpnkj5d2w/dashboard-sample.json?dl=1
 ## Dashboard
+You can add up to 99 dashboards, each with up to 99 commands.
 Dashboards are JSON arrays of JSON objests with following attributes:
 - title (optional): It defaults to "[ Asynchronous | Synchronous ] execution of %fun$s on %tgt$s with [no arguments | following arguments: %arg$s]"
 - client: local or local_async
@@ -16,6 +17,9 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 
 ## TODO
 - Update Screenshots on Google Play
+- Restrict number of dashboards to 99 (required by DashbordAdapter.getChildId)
+- Do not accept dashboards with null URL
+
 - Load old (previous) style of preferences as the default
 - Dashboards
     - can be absolute or relative
@@ -32,9 +36,16 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 - Validate URLs in EditTextPreference
     - use onPreferenceChangeListener
 
-- Ask for Garbage Collection while waiting for network
 - onDestroy: log out
+- onTrimMemory: clean up dashboards and stuff ....
+- onPause: memorize current SaltMaster and authToken
 - Re-Implement relative dashboard URL:
     - Relative Dashboards need to be reloaded by switching to another Salt Master
 - Testing:
     - permissions
+
+
+
+
+Popup.error(NamakApplication.foregroundActivity, "This should never happen!", 103, error);
+getString(R.string.not_logged_in), 200
