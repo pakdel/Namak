@@ -9,7 +9,7 @@
     <string name="dashboard_load_failed_get">Unexpected response when getting "%1$s" dashboard</string>
     <string name="dashboard_load_null">Got a null response for "%1$s" dashboard</string>
     <string name="dashboard_load_failed_parse">Failed to load "%1$s" dashboard</string>
-    <string name="dashboard_bad_item">Wrong / Disabled</string>
+    <string name="dashboard_bad_item">Incorrect / Disabled</string>
 
     <string name="not_logged_in">Not logged in</string>
 
