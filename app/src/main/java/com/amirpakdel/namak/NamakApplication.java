@@ -89,7 +89,9 @@ public class NamakApplication extends android.app.Application {
         saltmasters = saltmasterStringSet.toArray(saltmasters);
     }
     public static String[] getSaltmasterNames() {
-        assert saltmasters != null;
+        if (saltmasters == null) {
+            loadSaltmasters();
+        }
         String[] ret = new String[saltmasters.length];
         for (int i=0; i<saltmasters.length; i++) {
             ret[i] = pref.getString("saltmaster_" + saltmasters[i] + "_name", context.getString(R.string.pref_master_name_default, i));
