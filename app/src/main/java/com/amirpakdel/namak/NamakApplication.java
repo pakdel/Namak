@@ -89,9 +89,7 @@ public class NamakApplication extends android.app.Application {
         saltmasters = saltmasterStringSet.toArray(saltmasters);
     }
     public static String[] getSaltmasterNames() {
-        if (saltmasters == null) {
-            loadSaltmasters();
-        }
+        assert saltmasters != null;
         String[] ret = new String[saltmasters.length];
         for (int i=0; i<saltmasters.length; i++) {
             ret[i] = pref.getString("saltmaster_" + saltmasters[i] + "_name", context.getString(R.string.pref_master_name_default, i));
@@ -162,8 +160,8 @@ public class NamakApplication extends android.app.Application {
                     case "auto_execute":
                         mAutoExecute = pref.getBoolean("auto_execute", false);
                         break;
-                    default:
-                        Log.d("prefChanged", "Not grabbing changes of this preference: " + key);
+//                    default:
+//                        Log.d("prefChanged", "Not grabbing changes of this preference: " + key);
                 }
             }
         };

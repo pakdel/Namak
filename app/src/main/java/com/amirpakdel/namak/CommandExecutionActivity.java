@@ -1,6 +1,5 @@
 package com.amirpakdel.namak;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -30,7 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-//public class CommandExecutionActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
 public class CommandExecutionActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String COMMAND_GROUP_POSITION = "command_group_position";
