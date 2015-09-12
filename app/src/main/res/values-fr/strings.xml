@@ -25,4 +25,9 @@
     <string name="pref_misc_category_title">Divers</string>
     <string name="pref_master_eauth_title">"Backend d'authentification"</string>
     <string name="not_logged_in">Non connecté</string>
+    <string name="dashboard_bad_item">Incorrect / Désactivé</string>
+    <string name="dashboard_load_failed_get">"Réponse inattendue lors de l'obtention du dashboard \"%1$\""</string>
+    <string name="dashboard_load_failed_parse">Impossible de charger le dashboard "%1$"</string>
+    <string name="dashboard_load_null">"Réponse nulle reçu pour dasbhboard \"%1$s\""</string>
+    <string name="dashboard_load_succeeded">Dashboard "%1$s" chargé</string>
 </resources>

@@ -1,12 +1,7 @@
 package com.amirpakdel.namak;
 
-import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.test.ApplicationTestCase;
-import android.test.MoreAsserts;
-import android.util.Log;
-
-import com.amirpakdel.namak.NamakApplication;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -35,13 +30,21 @@ public class ApplicationTest extends ApplicationTestCase<NamakApplication> {
         application = getApplication();
     }
 
-    public void testCorrectVersion() throws Exception {
+    public void testInitialization() throws Exception {
         PackageInfo info = application.getPackageManager().getPackageInfo(application.getPackageName(), 0);
         assertNotNull(info);
 //        MoreAsserts.assertMatchesRegex("\\d\\.\\d alpha \\d", info.versionName);
         assertNotNull(NamakApplication.getAppContext());
         assertNotNull(NamakApplication.getPref());
-        assertEquals(application.getString(R.string.not_logged_in),
-                NamakApplication.getSaltMaster().getName());
+        assertNotNull(NamakApplication.getDashboardAdapter());
+//        assertNotNull(NamakApplication.getAutoExecute());
+        assertEquals(-1, NamakApplication.getSaltMasterIndex());
+
+        SaltMaster sm = NamakApplication.getSaltMaster();
+        assertNotNull(sm);
+        assertNull(sm.getAuthToken());
+        assertNull(sm.getBaseUrl());
+        assertNull(sm.getId());
+        assertEquals(application.getString(R.string.not_logged_in), sm.getName());
     }
 }

@@ -1,6 +1,5 @@
 package com.amirpakdel.namak;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -29,9 +29,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class CommandExecutionActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
+public class CommandExecutionActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    public static final String COMMAND_ITEM_POSITION = "command_position";
+    public static final String COMMAND_GROUP_POSITION = "command_group_position";
+    public static final String COMMAND_CHILD_POSITION = "command_child_position";
     private JSONObject mJSONCommand;
     private Boolean async;
     private String mJID;
@@ -45,7 +46,7 @@ public class CommandExecutionActivity extends Activity implements SwipeRefreshLa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         prepareCommand();
         setupViews();
     }
@@ -53,10 +54,15 @@ public class CommandExecutionActivity extends Activity implements SwipeRefreshLa
 
     private void prepareCommand() {
         try {
-            mJSONCommand = NamakApplication.getDashboardItem(getIntent().getExtras().getInt(COMMAND_ITEM_POSITION));
+            mJSONCommand = NamakApplication.getDashboardItem(
+                    getIntent().getExtras().getInt(COMMAND_GROUP_POSITION),
+                    getIntent().getExtras().getInt(COMMAND_CHILD_POSITION));
         } catch (JSONException error) {
             // This should never happen
-            mExecutionLogView = new LogView(this, "Failed to find Dashboard Item " + getIntent().getExtras().getInt(COMMAND_ITEM_POSITION));
+            mExecutionLogView = new LogView(this,
+                    "Failed to find Dashboard Item "
+                    + getIntent().getExtras().getInt(COMMAND_GROUP_POSITION)
+                    + " / " + getIntent().getExtras().getInt(COMMAND_CHILD_POSITION));
             Log.e("CmdExec: onCreate", error.toString(), error);
             assert mJSONCommand == null;
             assert async == null;

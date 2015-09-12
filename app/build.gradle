@@ -8,8 +8,8 @@ android {
         applicationId "com.amirpakdel.namak"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.0 alpha 3"
+        versionCode 4
+        versionName "1.0 alpha 4"
     }
 
     buildTypes {
@@ -27,7 +27,10 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.0'
-    compile 'com.android.support:support-v4:22.1.0'
-    compile 'com.mcxiaoke.volley:library:1.0.6'
+    compile 'com.android.support:appcompat-v7:22.+'
+    compile 'com.android.support:support-v4:22.*'
+    // Snackbar
+    compile 'com.android.support:design:22.+'
+    // Volley
+    compile 'com.mcxiaoke.volley:library:1.0.19'
 }

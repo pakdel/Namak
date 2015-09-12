@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,20 +16,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 
-public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, NamakApplication.DashboardListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NamakApplication.DashboardListener {
 
     private ListView mDrawerListView;
+
     private void setSaltMasterNames() {
         mDrawerListView.setAdapter(new ArrayAdapter<>(
                 mainActivity,
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-
-                // FIXME needs to be rloaded after a Pref Change
                 NamakApplication.getSaltmasterNames()
         ));
         int position = NamakApplication.getSaltMasterIndex();
@@ -44,8 +44,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 //    private static SharedPreferences.OnSharedPreferenceChangeListener prefChanged;
     private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-//                Log.e("GeneralPref", key + " changed");
             if(key.startsWith("saltmasters") || (key.startsWith("saltmaster_") && key.endsWith("_name"))) {
+                NamakApplication.loadSaltmasters();
                 setSaltMasterNames();
             }
         }
@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     @Override
     public void onPause() {
         super.onPause();
-        NamakApplication.getPref().unregisterOnSharedPreferenceChangeListener(listener);
+//        NamakApplication.getPref().unregisterOnSharedPreferenceChangeListener(listener);
     }
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mainActivity = this;
         setTitle(R.string.app_name);
 
@@ -117,19 +117,24 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mDrawerListView.setLayoutParams(drawerListViewParams);
         mDrawerListView.setBackgroundColor(Color.WHITE);
 
-        ListView mainView = new ListView(this);
+        ExpandableListView mainView = new ExpandableListView(this);
         mainView.setLayoutParams(new ListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mainView.setAdapter(NamakApplication.getDashboardListAdapter());
-        mainView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mainView.setAdapter(NamakApplication.getDashboardAdapter());
+        mainView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(NamakApplication.getSaltMaster().getAuthToken() == null) {
-                    Toast.makeText(NamakApplication.getAppContext(), "Not logged into any Salt Master!", Toast.LENGTH_LONG).show();
-                    return;
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                if (NamakApplication.getSaltMaster().getAuthToken() == null) {
+                    Popup.error(mainActivity, getString(R.string.not_logged_in), 200, null);
+                    return false;
                 }
                 Intent intent = new Intent(mainActivity, CommandExecutionActivity.class);
-                intent.putExtra(CommandExecutionActivity.COMMAND_ITEM_POSITION, position);
+                intent.putExtra(CommandExecutionActivity.COMMAND_GROUP_POSITION, groupPosition);
+                intent.putExtra(CommandExecutionActivity.COMMAND_CHILD_POSITION, childPosition);
+
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
                 startActivity(intent);
+                return true;
             }
 
         });
@@ -169,6 +174,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 return true;
 //            default:
