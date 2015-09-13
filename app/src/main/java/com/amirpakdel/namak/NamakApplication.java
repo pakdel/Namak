@@ -279,7 +279,7 @@ public class NamakApplication extends android.app.Application {
             try {
                 dashboardJSON.put("title", title);
             } catch (JSONException error) {
-                Popup.error(NamakApplication.foregroundActivity, "This should never happen!", 103, error);
+                Popup.error(NamakApplication.foregroundActivity, context.getString(R.string.should_never_happen), 103, error);
             }
         }
         dashboards.put(Integer.parseInt(dashboard), newDashboard);

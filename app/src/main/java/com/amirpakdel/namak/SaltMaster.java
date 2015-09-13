@@ -102,6 +102,16 @@ public class SaltMaster {
         NamakApplication.addToVolleyRequestQueue(loginRequest);
     }
 
+    public String getRelativeUrl(String path) {
+        try {
+            return new URL(new URL(mBaseUrl), path).toString();
+        } catch (MalformedURLException error) {
+            // FIXME Add proper error handling
+            Log.e("SaltMaster", "getRelativeUrl: " + path + " is not a relative URL", error);
+            return null;
+        }
+    }
+
     private String getDashboardFullUrl(String dashboardUrl) {
         try {
             return new URL(dashboardUrl).toString();

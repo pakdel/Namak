@@ -16,7 +16,6 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 - Should we just increase SaltMaster pref no., instead of finding holes in the sequence?
 
 ## TODO
-- Update Screenshots on Google Play
 - Restrict number of dashboards to 99 (required by DashbordAdapter.getChildId)
 - Do not accept dashboards with null URL
 
@@ -25,8 +24,6 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
     - can be absolute or relative
     - can have their own Timeout
     - Do not reload all of them, if just one is changed
-- The trailing slash of Salt Master address should be optional
-- Add some documentation
 - Add more verbose error messages
 - Grab and cache a list of Minions
 - Make sure Volley does not cache execution URLs
@@ -43,9 +40,3 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
     - Relative Dashboards need to be reloaded by switching to another Salt Master
 - Testing:
     - permissions
-
-
-
-
-Popup.error(NamakApplication.foregroundActivity, "This should never happen!", 103, error);
-getString(R.string.not_logged_in), 200
