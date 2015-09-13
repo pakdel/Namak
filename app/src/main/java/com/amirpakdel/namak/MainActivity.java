@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ActionMenuView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     // We recommend you keep a reference to the listener in the instance data of an object that will exist as long as you need the listener.
     @SuppressWarnings("FieldCanBeLocal")
 //    private static SharedPreferences.OnSharedPreferenceChangeListener prefChanged;
-    private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private SharedPreferences.OnSharedPreferenceChangeListener prefChanged = new SharedPreferences.OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if(key.startsWith("saltmasters") || (key.startsWith("saltmaster_") && key.endsWith("_name"))) {
                 NamakApplication.loadSaltmasters();
@@ -53,14 +54,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onResume() {
         super.onResume();
-        NamakApplication.getPref().registerOnSharedPreferenceChangeListener(listener);
+        NamakApplication.getPref().registerOnSharedPreferenceChangeListener(prefChanged);
         setSaltMasterNames();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        NamakApplication.getPref().unregisterOnSharedPreferenceChangeListener(listener);
+//        NamakApplication.getPref().unregisterOnSharedPreferenceChangeListener(prefChanged);
     }
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -86,22 +87,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-//                supportInvalidateOptionsMenu();
                 setTitle(NamakApplication.getSaltMaster().getName());
             }
 
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-//                supportInvalidateOptionsMenu();
                 setTitle(R.string.app_name);
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         mDrawerListView = new ListView(this);
-        // TODO use the following when the rest of the drawer items are implemented
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
         mDrawerListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -162,7 +158,19 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+//        getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem settingsMenuItem = menu.add(R.string.action_settings);
+        settingsMenuItem.setIcon(android.R.drawable.ic_menu_preferences);
+        settingsMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        settingsMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(NamakApplication.getAppContext(), SettingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                return true;
+            }
+        });
         return true;
     }
 
@@ -171,16 +179,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

@@ -11,6 +11,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ class SaltRequest extends JsonObjectRequest {
     private final String mAuthToken;
 
     public SaltRequest(SaltMaster sm, String api, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        super(sm.getBaseUrl() + api, jsonRequest,
+        super(sm.getRelativeUrl(api), jsonRequest,
                 (listener != null) ? listener : defaultListener,
                 (errorListener != null) ? errorListener : defaultErrorListener);
         this.mAuthToken = sm.getAuthToken();
