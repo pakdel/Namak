@@ -59,15 +59,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         NamakApplication.getPref().registerOnSharedPreferenceChangeListener(prefChanged);
         setSaltMasterNames();
 
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-
-        if (NamakApplication.getSaltMaster().getAuthToken() == null) {
+        final SharedPreferences prefs = NamakApplication.getPref();
+        if (prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1
+                || prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1) {
+            Popup.error(mainActivity, getString(R.string.incomplete_settings), 200, null);
+            mDrawerLayout.closeDrawers();
+        } else if (NamakApplication.getSaltMaster().getAuthToken() == null) {
             mDrawerLayout.openDrawer(GravityCompat.START);
             Popup.message(getString(R.string.log_in));
         } else {
             setTitle(NamakApplication.getSaltMaster().getName());
         }
+
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -157,16 +162,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mDrawerLayout.addView(mDrawerListView);
 
         setContentView(mDrawerLayout);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        final SharedPreferences prefs = NamakApplication.getPref();
-        if (prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1
-         || prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1) {
-            Popup.error(mainActivity, getString(R.string.incomplete_settings), 200, null);
-        }
     }
 
     @Override
