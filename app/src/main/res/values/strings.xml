@@ -3,7 +3,23 @@
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
 
+
+
+    <string name="helpPageURL" translatable="false">"http://www.amirpakdel.com/2015/09/10/namak/#%03d"</string>
+    <string name="details">Details</string>
+
+    <string name="dashboard_load_succeeded">Loaded "%1$s" dashboard</string>
+    <string name="dashboard_load_failed_get">Unexpected response when getting "%1$s" dashboard</string>
+    <string name="dashboard_load_null">Got a null response for "%1$s" dashboard</string>
+    <string name="dashboard_load_failed_parse">Failed to load "%1$s" dashboard</string>
+    <string name="dashboard_bad_item">Incorrect / Disabled</string>
+
+    <string name="should_never_happen">This should never happen!</string>
     <string name="not_logged_in">Not logged in</string>
+    <string name="log_in">Choose a Salt Master to login</string>
+    <string name="incomplete_settings">Incomplete settings</string>
+
+
     <string name="title_minions" translatable="false">Minions</string>
     <string name="title_cloud" translatable="false">Cloud</string>
     <string name="title_runners" translatable="false">Runners</string>
@@ -16,4 +32,8 @@
 
     <string name="yes">yes</string>
     <string name="no">no</string>
+    <!--<string name="title_activity_main">%1$s > %2$s</string>-->
+    <string name="title_activity_general_settings">Settings</string>
+    <string name="title_activity_saltmaster_settings">Salt Master Settings</string>
+    <string name="title_activity_dashboard_settings">Dashboard Settings</string>
 </resources>

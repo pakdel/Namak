@@ -14,14 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SaltMaster {
-    //    private DashboardListener dashboardListener = null;
-    // Currently we have 2 DashboardListeners:
-    // - NamakApplication which updates dashboardListAdapter
-    // - MainActivity which stops the refreshing animation (setRefreshing false)
-//    private final ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(2);
-    /**
-     * Created by pakdel@gmail.com on 23/04/15.
-     */
     private int mTimeout;
     private String mId;
     private String mName;
@@ -43,8 +35,6 @@ public class SaltMaster {
         this.mAuthToken = null;
     }
 
-
-    // TODO implement setIndex using NamakApplication.getSaltMasterId(index)
     public void setId(String id) {
         this.mId = id;
         this.login();
@@ -74,6 +64,8 @@ public class SaltMaster {
             loginPayload.put("username", mUsername);
             loginPayload.put("password", mPassword);
         } catch (JSONException error) {
+//            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.should_never_happen), 401, error);
+
             Toast.makeText(NamakApplication.getAppContext(), "Could not generate the login payload!", Toast.LENGTH_SHORT).show();
             Log.e("SaltMaster: Err.login", error.toString(), error);
         }
@@ -83,6 +75,7 @@ public class SaltMaster {
                     public void onResponse(JSONObject response) {
                         try {
                             mAuthToken = response.getJSONArray("return").getJSONObject(0).getString("token");
+                            Toast.makeText(NamakApplication.getAppContext(), "Successfully logged into " + mName, Toast.LENGTH_LONG).show();
                             Log.d("SaltMaster: login", "authToken = " + mAuthToken);
                         } catch (JSONException error) {
                             Toast.makeText(NamakApplication.getAppContext(), "Unexpected response during login!", Toast.LENGTH_SHORT).show();
@@ -100,6 +93,16 @@ public class SaltMaster {
                     }
                 });
         NamakApplication.addToVolleyRequestQueue(loginRequest);
+    }
+
+    public String getRelativeUrl(String path) {
+        try {
+            return new URL(new URL(mBaseUrl), path).toString();
+        } catch (MalformedURLException error) {
+            // FIXME Add proper error handling
+            Log.e("SaltMaster", "getRelativeUrl: " + path + " is not a relative URL", error);
+            return null;
+        }
     }
 
     private String getDashboardFullUrl(String dashboardUrl) {

@@ -1,10 +1,12 @@
 package com.amirpakdel.namak;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
+import android.util.SparseArray;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -21,7 +23,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class NamakApplication extends android.app.Application {
@@ -37,58 +38,84 @@ public class NamakApplication extends android.app.Application {
     private static String[] saltmasters;
     private static SaltMaster sm;
     private static RequestQueue queue;
+    private static int timeout = TimeoutPreference.DEFAULT_TIMEOUT;
+    private static Activity foregroundActivity = null;
+
+    private static SparseArray<JSONArray> dashboards;
+    public static JSONObject getDashboardItem(int dashboardIndex, int dashboardItemPosition) throws JSONException {
+        return dashboards.valueAt(dashboardIndex).getJSONObject(dashboardItemPosition);
+    }
+    private static SparseArray<String> dashboardNames;
+    public static SparseArray<JSONArray> getDashboards() {
+        return dashboards;
+    }
+    public static String getDashboardName(int i) {
+        return dashboardNames.valueAt(i);
+    }
+
+    // Currently we have only 1 DashboardListener:
+    // - MainActivity which stops the refreshing animation (setRefreshing false)
     private static final ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(2);
-    private static List<JSONObject> dashboard = new ArrayList<>(20);
-    private static int dashboardTimeout = TimeoutPreference.DEFAULT_TIMEOUT;
-    private static DashboardListAdapter dashboardListAdapter;
+    private static DashboardAdapter dashboardAdapter;
 
-    public static Context getAppContext() {
-        return context;
+
+    public static Activity getForegroundActivity() { return foregroundActivity; }
+    private static final class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
+        public void onActivityCreated(Activity activity, Bundle bundle) {
+            foregroundActivity = activity;
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) { /* No op */ }
+        @Override
+        public void onActivityResumed(Activity activity) { /* No op */ }
+        @Override
+        public void onActivityPaused(Activity activity) { /* No op */ }
+        @Override
+        public void onActivityStopped(Activity activity) { /* No op */ }
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle bundle) { /* No op */ }
+        @Override
+        public void onActivityDestroyed(Activity activity) { /* No op */ }
     }
 
-    public static SaltMaster getSaltMaster() {
-        return sm;
-    }
+    public static Context getAppContext() { return context; }
 
-    public static SharedPreferences getPref() {
-        return pref;
-    }
+    public static SaltMaster getSaltMaster() { return sm; }
 
-    private static void loadSaltmasters() {
+    public static SharedPreferences getPref() { return pref; }
+
+    public static void loadSaltmasters() {
         Set<String> saltmasterStringSet = pref.getStringSet("saltmasters", new HashSet<String>());
         saltmasters = new String[saltmasterStringSet.size()];
         saltmasters = saltmasterStringSet.toArray(saltmasters);
     }
     public static String[] getSaltmasterNames() {
-        // FIXME reload only if changed
-        loadSaltmasters();
+        if (saltmasters == null) {
+            loadSaltmasters();
+        }
         String[] ret = new String[saltmasters.length];
         for (int i=0; i<saltmasters.length; i++) {
-            ret[i] = pref.getString("saltmaster_" + saltmasters[i] + "_name", "No Name ("+i+")" /*getString(R.string.pref_default_master)*/);
+            ret[i] = pref.getString("saltmaster_" + saltmasters[i] + "_name", context.getString(R.string.pref_master_name_default, i));
         }
         return ret;
     }
     public static String getSaltMasterId(int index) {
         return saltmasters[index];
     }
-//    public static int getSaltMasterIndex(String id) {
-//        return Arrays.binarySearch(saltmasters, id);
-//    }
     public static int getSaltMasterIndex() {
         if (sm == null || sm.getId() == null || saltmasters == null) { return -1; }
         return Arrays.binarySearch(saltmasters, sm.getId());
     }
 
-    public static DashboardListAdapter getDashboardListAdapter() {
-        return dashboardListAdapter;
+    public static DashboardAdapter getDashboardAdapter() {
+        return dashboardAdapter;
     }
 
     public static void addToVolleyRequestQueue(Request req) {
         queue.add(req);
-    }
-
-    public static JSONObject getDashboardItem(int dashboardItemPosition) throws JSONException {
-        return dashboard.get(dashboardItemPosition);
+        // Expecting some idle time
+        System.gc();
     }
 
     public static boolean getAutoExecute() {
@@ -97,29 +124,31 @@ public class NamakApplication extends android.app.Application {
 
     public void onCreate() {
         super.onCreate();
-        context = getApplicationContext();
-        pref = PreferenceManager.getDefaultSharedPreferences(context);
-
         // DEBUG
-//      PreferenceManager.getDefaultSharedPreferences(this).edit().clear().commit();
-//      PreferenceManager.setDefaultValues(this, R.xml.pref, true);
+//        PreferenceManager.getDefaultSharedPreferences(this).edit().clear().commit();
+//        PreferenceManager.setDefaultValues(this, R.xml.pref, true);
 //        PreferenceManager.setDefaultValues(NamakApplication.context, R.xml.pref, false);
 
-        mAutoExecute = pref.getBoolean("auto_execute", false);
+        registerActivityLifecycleCallbacks(new MyActivityLifecycleCallbacks());
 
-        // Volley
-        queue = Volley.newRequestQueue(context);
-
-        sm = new SaltMaster( pref.getInt("timeout", TimeoutPreference.DEFAULT_TIMEOUT) );
-
+        context = getApplicationContext();
+        pref = PreferenceManager.getDefaultSharedPreferences(context);
         prefChanged = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 assert sm != null;
-                Log.d("prefChanged", "Updating " + key);
-                // FIXME We should not reload all dashboards when just one is changed
-                if (key.equals("dashboards") || (key.startsWith("dashboard_") && key.endsWith("_url"))) {
-                    reloadDashboards();
+
+                if (key.equals("dashboards")) {
+                    loadDashboards();
+                    return;
+                }
+                if (key.startsWith("dashboard_") && key.endsWith("_url")) {
+                    loadDashboard(key.substring(10, key.length() - 4));
+                    return;
+                }
+                if (key.startsWith("dashboard_") && key.endsWith("_name")) {
+                    dashboardNames.put(Integer.parseInt(key.substring(10, key.length() - 5)), pref.getString(key, null));
+                    dashboardAdapter.notifyDataSetChanged();
                     return;
                 }
                 if (key.startsWith("saltmaster_"+sm.getId())) {
@@ -129,88 +158,106 @@ public class NamakApplication extends android.app.Application {
 
                 switch (key) {
                     case "timeout":
-                        sm.setTimeout(pref.getInt("timeout", TimeoutPreference.DEFAULT_TIMEOUT));
+                        timeout = pref.getInt("timeout", TimeoutPreference.DEFAULT_TIMEOUT);
+                        sm.setTimeout(timeout);
                         break;
                     case "auto_execute":
                         mAutoExecute = pref.getBoolean("auto_execute", false);
                         break;
-                    default:
-                        Log.e("prefChanged", "Not grabbing changes of this preference: " + key);
+//                    default:
+//                        Log.d("prefChanged", "Not grabbing changes of this preference: " + key);
                 }
             }
         };
         pref.registerOnSharedPreferenceChangeListener(prefChanged);
+        mAutoExecute = pref.getBoolean("auto_execute", false);
+        timeout = pref.getInt("timeout", TimeoutPreference.DEFAULT_TIMEOUT);
 
-        dashboardListAdapter = new DashboardListAdapter(context);
-        // dashboardListAdapter is used in reloadDashboards, but shouldn't
-        reloadDashboards();
-    }
+        int dashboardsCount = pref.getStringSet("dashboards", new HashSet<String>()).size();
+        dashboards = new SparseArray<>(dashboardsCount);
+        dashboardNames = new SparseArray<>(dashboardsCount);
 
+        // Volley
+        queue = Volley.newRequestQueue(context);
 
-    //    public void setAuthToken(String mAuthToken) { this.mAuthToken = mAuthToken; }
-    public static void addDashboardListener(DashboardListener dashboardListener) {
-        mDashboardListeners.add(dashboardListener);
-        dashboardListener.onDashboardLoadFinished(/*mDashboard*/);
+        sm = new SaltMaster(timeout);
+
+        dashboardAdapter = new DashboardAdapter(context);
+        loadDashboards();
     }
 
     public interface DashboardListener {
-        // If loading the mDashboard has not been successful, mDashboard will be null
-        void onDashboardLoadFinished(/*JSONArray dashboard*/);
+        void onDashboardLoadFinished();
     }
 
+    public static void addDashboardListener(DashboardListener dashboardListener) {
+        mDashboardListeners.add(dashboardListener);
+        dashboardListener.onDashboardLoadFinished();
+    }
+
+    private static int loadingDashboards = 0;
     private static void triggerDashboardListeners() {
+        // FIXME race condition?
+        loadingDashboards--;
+        if (loadingDashboards>0) { return; }
+        dashboardAdapter.notifyDataSetChanged();
         for (DashboardListener dashboardListener : mDashboardListeners) {
-            dashboardListener.onDashboardLoadFinished(/*mDashboard*/);
+            dashboardListener.onDashboardLoadFinished();
         }
     }
 
+    public static void loadDashboards() {
+        loadDashboards(false);
+    }
     public static void reloadDashboards() {
-        NamakApplication.dashboard.clear();
-        dashboardListAdapter.clear();
-        // Need to run mSwipeRefreshLayout.setRefreshing(false);
-        for (String dashboard : pref.getStringSet("dashboards", new HashSet<String>())) {
-            loadDashboard(dashboard);
+        loadDashboards(true);
+    }
+    public static void loadDashboards(boolean forceReload) {
+        Set<String> dashboardsPref = pref.getStringSet("dashboards", new HashSet<String>());
+        for (String dashboard : dashboardsPref) {
+            if (forceReload || dashboards.indexOfKey(Integer.parseInt(dashboard)) < 0) {
+                loadDashboard(dashboard);
+            }
         }
-
+        for(int i = 0; i < dashboards.size(); i++) {
+            if ( ! dashboardsPref.contains(String.valueOf(dashboards.keyAt(i))) ) {
+                dashboards.removeAt(i);
+                dashboardNames.removeAt(i);
+            }
+        }
     }
 
-    private static void loadDashboard(String dashboard) {
+    private static void loadDashboard(final String dashboard) {
         final String dashboardName = pref.getString("dashboard_" + dashboard + "_name", null);
         String dashboardUrl  = pref.getString("dashboard_" + dashboard + "_url", null);
+        if (dashboardUrl == null) { return; }
         JsonArrayRequest dashboardRequest = new JsonArrayRequest(dashboardUrl,
                 new Response.Listener<JSONArray>() {
-                    //                    @Override
                     public void onResponse(JSONArray response) {
-                        try {
-                            onDashboardLoadFinished(response);
-                            Log.d("SaltMaster: dashboard", response.toString(2).substring(0, 50));
-                            Toast.makeText(NamakApplication.getAppContext(), "Loaded dashboard "+dashboardName, Toast.LENGTH_SHORT).show();
-                        } catch (JSONException error) {
-//                            mDashboard = null;
-                            Toast.makeText(NamakApplication.getAppContext(), "Unexpected response when getting dashboard "+dashboardName, Toast.LENGTH_SHORT).show();
-                            Log.e("SaltMaster: login", error.toString(), error);
-                            Log.d("SaltMaster: dashboard", response.toString().substring(0, 50));
-                        }
-                        triggerDashboardListeners();
+                        parseDashboard(dashboard, dashboardName, response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(NamakApplication.getAppContext(), "Failed to load dashboard "+dashboardName, Toast.LENGTH_SHORT).show();
-                        Log.e("SaltMaster: dash.Err", error.toString(), error);
+                        Popup.error(NamakApplication.foregroundActivity, context.getString(R.string.dashboard_load_failed_get, dashboardName), 100, error);
                         triggerDashboardListeners();
                     }
                 });
         // To set or not to set the timeout, that is the question
-        dashboardRequest.setRetryPolicy(new DefaultRetryPolicy(dashboardTimeout * 1000, 1, 1.0f));
+        dashboardRequest.setRetryPolicy(new DefaultRetryPolicy(timeout * 1000, 1, 1.0f));
         NamakApplication.addToVolleyRequestQueue(dashboardRequest);
+        // FIXME race condition?
+        loadingDashboards++;
     }
 
-    public static void onDashboardLoadFinished(JSONArray newDashboard) {
+    public static void parseDashboard(String dashboard, String dashboardName, JSONArray newDashboard) {
         if (newDashboard == null) {
+            Popup.error(NamakApplication.foregroundActivity, context.getString(R.string.dashboard_load_null, dashboardName), 101, null);
+            triggerDashboardListeners();
             return;
         }
+        JSONException parseError = null;
         for (int i = 0; i < newDashboard.length(); i++) {
             JSONObject dashboardJSON = null;
             String title = "Not Set Yet!";
@@ -225,20 +272,26 @@ public class NamakApplication extends android.app.Application {
                     } else {
                         title += " with following arguments: " + dashboardJSON.opt("arg").toString();
                     }
-                    dashboardJSON.put("title", title);
                 }
-
             } catch (JSONException error) {
-//                Toast.makeText(NamakApplication.getAppContext(), "Failed to get title of dashboard item #" + i, Toast.LENGTH_SHORT).show();
-                Log.e("NamaApp: title", error.toString(), error);
-                Log.d("NamaApp: title", dashboardJSON.toString().substring(0, 50));
-//                        mSwipeRefreshLayout.setEnabled(true);
-                // FIXME Put some translated string and check it in the ListView and maybe Disable Click
-                title = "Wrong / Disabled!";
+                title = context.getString(R.string.dashboard_bad_item);
+                parseError = error;
+                Log.d("NamakApp: title", dashboardJSON.toString().substring(0, 50));
             }
-            NamakApplication.dashboard.add(dashboardJSON);
-            dashboardListAdapter.add(title);
+            try {
+                dashboardJSON.put("title", title);
+            } catch (JSONException error) {
+                Popup.error(NamakApplication.foregroundActivity, context.getString(R.string.should_never_happen), 103, error);
+            }
         }
+        dashboards.put(Integer.parseInt(dashboard), newDashboard);
+        dashboardNames.put(Integer.parseInt(dashboard), dashboardName);
+        if (parseError == null) {
+            Popup.message(context.getString(R.string.dashboard_load_succeeded, dashboardName));
+        } else {
+            Popup.error(NamakApplication.foregroundActivity, context.getString(R.string.dashboard_load_failed_parse, dashboardName), 102, parseError);
+        }
+        triggerDashboardListeners();
     }
 
 }

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amirpakdel.namak">
+    package="com.amirpakdel.namak" >
 
-    <!--Not used; it is always overridden by the value specified in the Gradle build script-->
-    <!--android:versionCode="1"-->
-    <!--android:versionName="1.0">-->
+    <!-- Not used; it is always overridden by the value specified in the Gradle build script -->
+    <!-- android:versionCode="1" -->
+    <!-- android:versionName="1.0"> -->
 
-    <!--Not used; it is always overridden by the value specified in the Gradle build script-->
-    <!--<uses-sdk-->
-    <!--android:minSdkVersion="19"-->
-    <!--android:targetSdkVersion="22" />-->
+
+    <!-- Not used; it is always overridden by the value specified in the Gradle build script -->
+    <!-- <uses-sdk -->
+    <!-- android:minSdkVersion="19" -->
+    <!-- android:targetSdkVersion="22" /> -->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -21,32 +22,52 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/app_name">
-        <intent-filter>
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity">
+            android:name=".CommandExecutionActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/title_activity_command_execution"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amirpakdel.namak.MainActivity" />
         </activity>
         <activity
-            android:name=".CommandExecutionActivity"
-            android:label="@string/title_activity_command_execution"
-            android:parentActivityName=".MainActivity">
+            android:name=".GeneralSettingsActivity"
+            android:label="@string/title_activity_general_settings"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amirpakdel.namak.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SaltMasterSettingsActivity"
+            android:label="@string/title_activity_saltmaster_settings"
+            android:parentActivityName=".GeneralSettingsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.amirpakdel.namak.GeneralSettingsActivity" />
+        </activity>
+        <activity
+            android:name=".DashboardSettingsActivity"
+            android:label="@string/title_activity_dashboard_settings"
+            android:parentActivityName=".GeneralSettingsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.amirpakdel.namak.GeneralSettingsActivity" />
         </activity>
     </application>
 

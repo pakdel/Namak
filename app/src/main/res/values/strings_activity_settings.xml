@@ -1,6 +1,4 @@
 <resources>
-    <string name="title_activity_settings">Settings</string>
-
     <string name="pref_master_category_title" translatable="false">Salt Masters</string>
     <string name="pref_master_add_title">Add Salt Master</string>
     <string name="pref_master_name_title">Name</string>
@@ -36,6 +34,7 @@
 
     <string name="pref_misc_category_title">Miscellaneous</string>
     <string name="pref_timeout_title" translatable="false">Timeout</string>
+    <string name="pref_timeout_summary" translatable="false">Used for both of contacting SaltMasters and retrieving Dashboards</string>
     <string name="pref_auto_execute_title">Auto-execute</string>
     <string name="pref_auto_execute_summary">Execute the command as soon as it is selected</string>
 

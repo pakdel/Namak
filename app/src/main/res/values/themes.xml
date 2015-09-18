@@ -2,15 +2,16 @@
 <resources>
     <!-- the theme applied to the application or activity -->
     <style name="NamakTheme"
-        parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/NamakActionBar</item>
         <!--<item name="android:actionMenuTextColor">@color/actionbar_text</item>-->
         <item name="android:activatedBackgroundIndicator">@drawable/list_activated_background</item>
     </style>
 
+
     <!-- ActionBar styles -->
     <style name="NamakActionBar"
-        parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <!--<item name="android:background">@drawable/actionbar_background</item>-->
         <item name="android:background">@color/DarkerBlue</item>
     </style>
