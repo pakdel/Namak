@@ -1,10 +1,16 @@
 # Namak
 Salt Net API client
 
-Sample Dashboard: https://www.dropbox.com/s/vs4q2jfpnkj5d2w/dashboard-sample.json?dl=1
+Sample Dashboards:
+- This one has a bunch of faulty items for testing:
+ https://www.dropbox.com/s/vs4q2jfpnkj5d2w/dashboard-sample.json?dl=1
+- This just has one item: "Minion IPs":
+ https://www.dropbox.com/s/hd6hzrdlgb9ltfm/dashboard-sample2.json?dl=1
+
+
 ## Dashboard
 You can add up to 99 dashboards, each with up to 99 commands.
-Dashboards are JSON arrays of JSON objests with following attributes:
+Dashboards are JSON arrays of JSON objects with following attributes:
 - title (optional): It defaults to "[ Asynchronous | Synchronous ] execution of %fun$s on %tgt$s with [no arguments | following arguments: %arg$s]"
 - client: local or local_async
 - tgt: shell-style globbing minion target
@@ -19,7 +25,6 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 - Restrict number of dashboards to 99 (required by DashbordAdapter.getChildId)
 - Do not accept dashboards with null URL
 
-- Load old (previous) style of preferences as the default
 - Dashboards
     - can be absolute or relative
     - can have their own Timeout
@@ -33,6 +38,8 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 - Validate URLs in EditTextPreference
     - use onPreferenceChangeListener
 
+- Load old (previous) style of preferences as the default
+
 - onDestroy: log out
 - onTrimMemory: clean up dashboards and stuff ....
 - onPause: memorize current SaltMaster and authToken
@@ -40,3 +47,14 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
     - Relative Dashboards need to be reloaded by switching to another Salt Master
 - Testing:
     - permissions
+
+
+## Error Code categories
+100 NamakApplication
+200 MainActivity
+300 DashboardAdapter
+400 SaltMaster
+
+
+
+setPreferenceScreen

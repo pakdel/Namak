@@ -12,7 +12,8 @@ import android.view.View;
 import android.widget.Toast;
 
 public class Popup {
-    private Snackbar snackbar;
+    private static final String helpPageURL = NamakApplication.getAppContext().getString(R.string.helpPageURL);
+    private static int veryLongDuration = 8000; // Snackbar.LENGTH_LONG
     public static void message(@NonNull CharSequence text) {
         Toast.makeText(NamakApplication.getAppContext(), text, Toast.LENGTH_SHORT)
                 .show();
@@ -21,14 +22,13 @@ public class Popup {
         if (error != null) {
             Log.e(String.format("Error Code %03d", code), error.toString(), error);
         }
-        // FIXME translate "Details"
-        // FIXME Put the URL in values
-        Snackbar.make(parent.getWindow().getDecorView().findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG)
+        //noinspection ResourceType
+        Snackbar.make(parent.getWindow().getDecorView().findViewById(android.R.id.content), text, veryLongDuration)
                 .setAction("Details", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                                        Uri.parse(String.format("http://www.amirpakdel.com/2015/09/10/namak/#%03d", code)));
+                                        Uri.parse(String.format(helpPageURL, code)));
                                 parent.startActivity(browserIntent);
                             }
                         }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,11 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ActionMenuView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+
+import java.util.HashSet;
 
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NamakApplication.DashboardListener {
@@ -56,6 +58,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onResume();
         NamakApplication.getPref().registerOnSharedPreferenceChangeListener(prefChanged);
         setSaltMasterNames();
+
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+
+        if (NamakApplication.getSaltMaster().getAuthToken() == null) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            Popup.message(getString(R.string.log_in));
+        } else {
+            setTitle(NamakApplication.getSaltMaster().getName());
+        }
     }
 
     @Override
@@ -75,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mainActivity = this;
-        setTitle(R.string.app_name);
 
         mDrawerLayout = new DrawerLayout(this);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -120,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 if (NamakApplication.getSaltMaster().getAuthToken() == null) {
-                    Popup.error(mainActivity, getString(R.string.not_logged_in), 200, null);
+                    Popup.error(mainActivity, getString(R.string.not_logged_in), 201, null);
                     return false;
                 }
                 Intent intent = new Intent(mainActivity, CommandExecutionActivity.class);
@@ -149,11 +160,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-        setTitle(NamakApplication.getSaltMaster().getName());
+    protected void onStart() {
+        super.onStart();
+        final SharedPreferences prefs = NamakApplication.getPref();
+        if (prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1
+         || prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1) {
+            Popup.error(mainActivity, getString(R.string.incomplete_settings), 200, null);
+        }
     }
 
     @Override
@@ -164,7 +177,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         settingsMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(NamakApplication.getAppContext(), SettingsActivity.class);
+                Intent intent = new Intent(NamakApplication.getAppContext(), GeneralSettingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 return true;

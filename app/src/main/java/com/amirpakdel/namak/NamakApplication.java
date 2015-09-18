@@ -42,8 +42,8 @@ public class NamakApplication extends android.app.Application {
     private static Activity foregroundActivity = null;
 
     private static SparseArray<JSONArray> dashboards;
-    public static JSONObject getDashboardItem(int dashboard, int dashboardItemPosition) throws JSONException {
-        return dashboards.get(dashboard).getJSONObject(dashboardItemPosition);
+    public static JSONObject getDashboardItem(int dashboardIndex, int dashboardItemPosition) throws JSONException {
+        return dashboards.valueAt(dashboardIndex).getJSONObject(dashboardItemPosition);
     }
     private static SparseArray<String> dashboardNames;
     public static SparseArray<JSONArray> getDashboards() {
@@ -53,11 +53,13 @@ public class NamakApplication extends android.app.Application {
         return dashboardNames.valueAt(i);
     }
 
-
+    // Currently we have only 1 DashboardListener:
+    // - MainActivity which stops the refreshing animation (setRefreshing false)
     private static final ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(2);
     private static DashboardAdapter dashboardAdapter;
 
 
+    public static Activity getForegroundActivity() { return foregroundActivity; }
     private static final class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
         public void onActivityCreated(Activity activity, Bundle bundle) {
             foregroundActivity = activity;
@@ -123,8 +125,8 @@ public class NamakApplication extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         // DEBUG
-//      PreferenceManager.getDefaultSharedPreferences(this).edit().clear().commit();
-//      PreferenceManager.setDefaultValues(this, R.xml.pref, true);
+//        PreferenceManager.getDefaultSharedPreferences(this).edit().clear().commit();
+//        PreferenceManager.setDefaultValues(this, R.xml.pref, true);
 //        PreferenceManager.setDefaultValues(NamakApplication.context, R.xml.pref, false);
 
         registerActivityLifecycleCallbacks(new MyActivityLifecycleCallbacks());
@@ -184,13 +186,13 @@ public class NamakApplication extends android.app.Application {
         loadDashboards();
     }
 
+    public interface DashboardListener {
+        void onDashboardLoadFinished();
+    }
+
     public static void addDashboardListener(DashboardListener dashboardListener) {
         mDashboardListeners.add(dashboardListener);
         dashboardListener.onDashboardLoadFinished();
-    }
-
-    public interface DashboardListener {
-        void onDashboardLoadFinished();
     }
 
     private static int loadingDashboards = 0;
