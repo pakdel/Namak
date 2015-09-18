@@ -54,7 +54,3 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 200 MainActivity
 300 DashboardAdapter
 400 SaltMaster
-
-
-
-setPreferenceScreen
