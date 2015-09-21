@@ -60,10 +60,19 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setSaltMasterNames();
 
         final SharedPreferences prefs = NamakApplication.getPref();
-        if (prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1
-                || prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1) {
+        final boolean noSaltmaster = prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1;
+        final boolean noDashboard = prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1;
+        if (noSaltmaster ^ noDashboard) {
             Popup.error(mainActivity, getString(R.string.incomplete_settings), 200, null);
             mDrawerLayout.closeDrawers();
+        }
+        if (noSaltmaster) {
+            if (noDashboard) {  // noSaltmaster && noDashboard
+                Intent intent = new Intent(NamakApplication.getAppContext(), GeneralSettingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+            }  // The else is already handled
         } else if (NamakApplication.getSaltMaster().getAuthToken() == null) {
             mDrawerLayout.openDrawer(GravityCompat.START);
             Popup.message(getString(R.string.log_in));
