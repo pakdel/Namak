@@ -9,8 +9,6 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
 
 import java.util.HashSet;
 import java.util.Set;

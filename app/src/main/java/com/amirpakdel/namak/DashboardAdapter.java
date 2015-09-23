@@ -45,6 +45,7 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
         // Same as getGroupCount():
         // We can cache it, and then update it when notifyDataSetChanged() is called;
         // but I think it would be an overkill!
+        // Dashboards are limited to a maximum of 99 items
         return Math.min(NamakApplication.getDashboards().valueAt(i).length(), 99);
     }
 
@@ -70,6 +71,7 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int i, int i1) {
+        // Dashboards are limited to a maximum of 99 items
         return i * 1000 + i1;
     }
 
