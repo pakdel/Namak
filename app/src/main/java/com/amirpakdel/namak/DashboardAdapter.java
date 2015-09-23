@@ -45,7 +45,7 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
         // Same as getGroupCount():
         // We can cache it, and then update it when notifyDataSetChanged() is called;
         // but I think it would be an overkill!
-        return NamakApplication.getDashboards().valueAt(i).length();
+        return Math.min(NamakApplication.getDashboards().valueAt(i).length(), 99);
     }
 
     @Override

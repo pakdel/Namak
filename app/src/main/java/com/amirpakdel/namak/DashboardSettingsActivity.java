@@ -7,13 +7,14 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
-import android.util.Log;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class DashboardSettingsActivity extends NamakSettingsActivity {
     public static final String DASHBOARD_ID = "dashboard_id";
+    private static final String[] PREF_SUFFIXES = {/*"name", */"url"};
+
     private static String dashboard;
 
     @Override
@@ -28,6 +29,17 @@ public class DashboardSettingsActivity extends NamakSettingsActivity {
                 .commit();
     }
 
+    protected boolean canClose() {
+        final SharedPreferences prefs = NamakApplication.getPref();
+        for (String prefSuffix: PREF_SUFFIXES) {
+            if( ! prefs.contains("dashboard_" + dashboard + "_" + prefSuffix) ) {
+                Popup.error(this, getString(R.string.incomplete_settings), 500, null);
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static class DashboardPreferenceFragment extends NamakPreferenceFragment {
         protected void populateScreen(PreferenceScreen screen) {
             EditTextPreference name = new EditTextPreference(getActivity());
@@ -39,7 +51,7 @@ public class DashboardSettingsActivity extends NamakSettingsActivity {
             EditTextPreference url = new EditTextPreference(getActivity());
             url.setTitle(getString(R.string.pref_dashboard_url_title));
             url.setKey("dashboard_" + dashboard + "_url");
-            bindPreferenceSummaryToValue(url);
+            bindUrlPreferenceSummaryToValue(url);
             screen.addPreference(url);
 
             // TODO
@@ -63,7 +75,9 @@ public class DashboardSettingsActivity extends NamakSettingsActivity {
                                     dashboards.remove(dashboard);
                                     SharedPreferences.Editor edit = prefs.edit();
                                     edit.putStringSet("dashboards", dashboards);
-                                    // TODO Clear other configurations as well
+                                    for (String prefSuffix : PREF_SUFFIXES) {
+                                        edit.remove("dashboard_" + dashboard + "_" + prefSuffix);
+                                    }
                                     edit.apply();
 //                                    edit.commit();
                                     // TODO Do we need to signal changes?

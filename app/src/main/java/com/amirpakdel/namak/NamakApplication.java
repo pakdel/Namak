@@ -257,10 +257,15 @@ public class NamakApplication extends android.app.Application {
             triggerDashboardListeners();
             return;
         }
+        // DashboardAdapter.getChildId cannot handle dashboards with more than 99 items
+        // DashboardAdapter.getChildrenCount handles the limit
+        if (newDashboard.length() > 99) {
+            Popup.error(NamakApplication.foregroundActivity, context.getString(R.string.dashboard_too_long, dashboardName), 104, null);
+        }
         JSONException parseError = null;
         for (int i = 0; i < newDashboard.length(); i++) {
             JSONObject dashboardJSON = null;
-            String title = "Not Set Yet!";
+            String title;  // = "Not Set Yet!";
             try {
                 dashboardJSON = newDashboard.getJSONObject(i);
                 title = dashboardJSON.optString("title");

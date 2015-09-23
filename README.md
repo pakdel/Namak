@@ -22,29 +22,20 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 - Should we just increase SaltMaster pref no., instead of finding holes in the sequence?
 
 ## TODO
-- Restrict number of dashboards to 99 (required by DashbordAdapter.getChildId)
-- Do not accept dashboards with null URL
-
 - Dashboards
-    - can be absolute or relative
     - can have their own Timeout
-    - Do not reload all of them, if just one is changed
+    - can be absolute or relative
+- Re-Implement relative dashboard URL:
+    - Relative Dashboards need to be reloaded by switching to another Salt Master
 - Add more verbose error messages
 - Grab and cache a list of Minions
 - Make sure Volley does not cache execution URLs
 - Execution Activity:
     - re-run option
 
-- Validate URLs in EditTextPreference
-    - use onPreferenceChangeListener
-
-- Load old (previous) style of preferences as the default
-
 - onDestroy: log out
 - onTrimMemory: clean up dashboards and stuff ....
 - onPause: memorize current SaltMaster and authToken
-- Re-Implement relative dashboard URL:
-    - Relative Dashboards need to be reloaded by switching to another Salt Master
 - Testing:
     - permissions
 
@@ -54,3 +45,4 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 200 MainActivity
 300 DashboardAdapter
 400 SaltMaster
+500 GeneralSettingsActivity / DashboardSettingsActivity / SaltMasterSettingsActivity

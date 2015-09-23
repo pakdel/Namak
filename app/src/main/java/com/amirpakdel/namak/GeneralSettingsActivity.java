@@ -9,12 +9,15 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class GeneralSettingsActivity extends NamakSettingsActivity {
     protected static Activity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +30,16 @@ public class GeneralSettingsActivity extends NamakSettingsActivity {
                 .commit();
     }
 
+    protected boolean canClose() {
+        final SharedPreferences prefs = NamakApplication.getPref();
+        if (prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1
+                || prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1) {
+            Popup.error(this, getString(R.string.incomplete_settings), 500, null);
+            return false;
+        }
+        return true;
+    }
+
     public static class GeneralPreferenceFragment extends NamakPreferenceFragment {
         // Caution: The preference manager does not currently store a strong reference to the listener.
         // You must store a strong reference to the listener, or it will be susceptible to garbage collection.
@@ -36,14 +49,15 @@ public class GeneralSettingsActivity extends NamakSettingsActivity {
 
         private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key.equals("saltmasters") || (key.startsWith("saltmaster_") && key.endsWith("_name"))) {
+                if (key.equals("saltmasters") || (key.startsWith("saltmaster_") && key.endsWith("_name"))) {
                     recreateSaltMasterList();
                 }
-                if(key.equals("dashboards") || (key.startsWith("dashboard_") && key.endsWith("_name"))) {
+                if (key.equals("dashboards") || (key.startsWith("dashboard_") && key.endsWith("_name"))) {
                     recreateDashboardList();
                 }
             }
         };
+
         @Override
         public void onResume() {
             super.onResume();
@@ -63,7 +77,6 @@ public class GeneralSettingsActivity extends NamakSettingsActivity {
 
         private PreferenceCategory saltMasterCategory;
         private PreferenceCategory dashboardCategory;
-
 
 
         private class SaltMasterButton extends Preference {
@@ -128,7 +141,10 @@ public class GeneralSettingsActivity extends NamakSettingsActivity {
                     edit.putString("saltmaster_" + saltmaster + "_name", getString(R.string.pref_master_name_default, nextSaltmaster));
                     edit.apply();
 //                    edit.commit();
-                    recreateSaltMasterList();
+//                    recreateSaltMasterList();
+                    SaltMasterButton editSaltMaster = new SaltMasterButton(getActivity(), saltmaster);
+                    saltMasterCategory.addPreference(editSaltMaster);
+                    editSaltMaster.onClick();
                     return true;
                 }
             });
@@ -162,7 +178,10 @@ public class GeneralSettingsActivity extends NamakSettingsActivity {
                     edit.putString("dashboard_" + dashboard + "_name", getString(R.string.pref_dashboard_name_default, nextDashboard));
                     edit.apply();
 //                    edit.commit();
-                    recreateDashboardList();
+//                    recreateDashboardList();
+                    DashboardButton editDashboard = new DashboardButton(getActivity(), dashboard);
+                    dashboardCategory.addPreference(editDashboard);
+                    editDashboard.onClick();
                     return true;
                 }
             });

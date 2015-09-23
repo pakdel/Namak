@@ -26,6 +26,7 @@ import java.util.HashSet;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NamakApplication.DashboardListener {
 
     private ListView mDrawerListView;
+//    private TextView mHeader;
 
     private void setSaltMasterNames() {
         mDrawerListView.setAdapter(new ArrayAdapter<>(
@@ -60,24 +61,33 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setSaltMasterNames();
 
         final SharedPreferences prefs = NamakApplication.getPref();
-        final boolean noSaltmaster = prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1;
-        final boolean noDashboard = prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1;
-        if (noSaltmaster ^ noDashboard) {
-            Popup.error(mainActivity, getString(R.string.incomplete_settings), 200, null);
-            mDrawerLayout.closeDrawers();
+        // It should be also handled properly in the Settings activity
+        if (prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1
+                || prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1) {
+            Intent intent = new Intent(NamakApplication.getAppContext(), GeneralSettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            return;
         }
-        if (noSaltmaster) {
-            if (noDashboard) {  // noSaltmaster && noDashboard
-                Intent intent = new Intent(NamakApplication.getAppContext(), GeneralSettingsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-            }  // The else is already handled
-        } else if (NamakApplication.getSaltMaster().getAuthToken() == null) {
+        if (NamakApplication.getSaltMaster().getAuthToken() == null) {
+            // It is too much to do all four!
+            // mDrawerListView.setEnabled(false) does nothing!
+            // We would need a callback from SaltMaster.login() to remove the header view
+//            if (mHeader == null) {
+//                mHeader = new TextView(this);
+//                mHeader.setTextColor(Color.RED);
+//                mHeader.setText(R.string.log_in);
+//                mMainView.addHeaderView(mHeader);
+//            }
             mDrawerLayout.openDrawer(GravityCompat.START);
             Popup.message(getString(R.string.log_in));
-        } else {
+        } else {  // There is at least one Salt Master and we are already authenticated
             setTitle(NamakApplication.getSaltMaster().getName());
+            // mDrawerListView.setEnabled(false) does nothing!
+//            if (mHeader != null) {
+//                mMainView.removeHeaderView(mHeader);
+//            }
         }
 
         // Sync the toggle state after onRestoreInstanceState has occurred.

@@ -14,7 +14,10 @@ import java.util.Set;
 
 public class SaltMasterSettingsActivity extends NamakSettingsActivity {
     public static final String SALTMASTER_ID = "saltmaster_id";
+    private static final String[] PREF_SUFFIXES = {/*"name", */"url", "username", "password", "eauth"};
+
     private static String saltmaster;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +28,17 @@ public class SaltMasterSettingsActivity extends NamakSettingsActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SaltMasterPreferenceFragment())
                 .commit();
+    }
+
+    protected boolean canClose() {
+        final SharedPreferences prefs = NamakApplication.getPref();
+        for (String prefSuffix: PREF_SUFFIXES) {
+            if( ! prefs.contains("saltmaster_" + saltmaster + "_" + prefSuffix) ) {
+                Popup.error(this, getString(R.string.incomplete_settings), 500, null);
+                return false;
+            }
+        }
+        return true;
     }
 
     public static class SaltMasterPreferenceFragment extends NamakPreferenceFragment {
@@ -38,7 +52,7 @@ public class SaltMasterSettingsActivity extends NamakSettingsActivity {
             EditTextPreference url = new EditTextPreference(getActivity());
             url.setTitle(getString(R.string.pref_master_url_title));
             url.setKey("saltmaster_" + saltmaster + "_url");
-            bindPreferenceSummaryToValue(url);
+            bindUrlPreferenceSummaryToValue(url);
             screen.addPreference(url);
 
             EditTextPreference username = new EditTextPreference(getActivity());
@@ -50,14 +64,7 @@ public class SaltMasterSettingsActivity extends NamakSettingsActivity {
             EditTextPreference password = new EditTextPreference(getActivity());
             password.setTitle(getString(R.string.pref_master_password_title));
             password.setKey("saltmaster_" + saltmaster + "_password");
-            password.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object value) {
-                    preference.setSummary("****************");
-                    return true;
-                }
-            });
-            password.setSummary("****************");
+            bindPasswordPreferenceSummaryToValue(password);
             screen.addPreference(password);
 
 
@@ -83,7 +90,9 @@ public class SaltMasterSettingsActivity extends NamakSettingsActivity {
                                     saltmasters.remove(saltmaster);
                                     SharedPreferences.Editor edit = prefs.edit();
                                     edit.putStringSet("saltmasters", saltmasters);
-                                    // TODO Clear other configurations as well
+                                    for (String prefSuffix : PREF_SUFFIXES) {
+                                        edit.remove("saltmaster_" + saltmaster + "_" + prefSuffix);
+                                    }
                                     edit.apply();
 //                                    edit.commit();
                                     // TODO Do we need to signal changes?
