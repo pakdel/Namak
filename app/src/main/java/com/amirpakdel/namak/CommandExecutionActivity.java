@@ -1,6 +1,7 @@
 package com.amirpakdel.namak;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
 
     public static final String COMMAND_GROUP_POSITION = "command_group_position";
     public static final String COMMAND_CHILD_POSITION = "command_child_position";
+    static final int COMMAND_ADJUST_REQUEST = 0;
     private JSONObject mJSONCommand;
     private Boolean async;
     private String mJID;
@@ -47,28 +49,31 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         super.onCreate(savedInstanceState);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        prepareCommand();
-        setupViews();
-    }
 
-
-    private void prepareCommand() {
+        mExecutionLogView = new LogView(this);
         try {
             mJSONCommand = NamakApplication.getDashboardItem(
                     getIntent().getExtras().getInt(COMMAND_GROUP_POSITION),
                     getIntent().getExtras().getInt(COMMAND_CHILD_POSITION));
+            prepareCommand();
         } catch (JSONException error) {
             // This should never happen
-            mExecutionLogView = new LogView(this,
+            mExecutionLogView.setError(
                     "Failed to find Dashboard Item "
-                    + getIntent().getExtras().getInt(COMMAND_GROUP_POSITION)
-                    + " / " + getIntent().getExtras().getInt(COMMAND_CHILD_POSITION));
+                            + getIntent().getExtras().getInt(COMMAND_GROUP_POSITION)
+                            + " / " + getIntent().getExtras().getInt(COMMAND_CHILD_POSITION));
             Log.e("CmdExec: onCreate", error.toString(), error);
             assert mJSONCommand == null;
             assert async == null;
             return;
         }
 
+        setupViews();
+    }
+
+
+    private void prepareCommand() {
+        assert mJSONCommand != null;
         try {
             switch (mJSONCommand.getString("client")) {
                 case "local":
@@ -79,13 +84,13 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
                     break;
                 default:
                     async = null;
-                    mExecutionLogView = new LogView(this, "Client type '" + mJSONCommand.getString("client") + "' is not supported!");
+                    mExecutionLogView.setError("Client type '" + mJSONCommand.getString("client") + "' is not supported!");
                     // mJSONCommand != null
                     // async == null
                     return;
             }
         } catch (JSONException error) {
-            mExecutionLogView = new LogView(this, "Failed to find the client type!");
+            mExecutionLogView.setError("Failed to find the client type!");
             Log.e("CmdExec: onCreate", error.toString(), error);
             assert mJSONCommand != null;
             assert async == null;
@@ -93,9 +98,9 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         }
 
         try {
-            mExecutionLogView = new LogView(this, mJSONCommand.getString("fun"), mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
+            mExecutionLogView.setText(mJSONCommand.getString("fun"), mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
         } catch (JSONException error) {
-            mExecutionLogView = new LogView(this, "Failed to find either fun or tgt: " + error.toString());
+            mExecutionLogView.setError("Failed to find either fun or tgt: " + error.toString());
             Log.e("CmdExec: onCreate", error.toString(), error);
             assert mJSONCommand != null;
             assert async != null;
@@ -137,14 +142,72 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         if (NamakApplication.getAutoExecute()) {
             execute();
         } else {
+            final LinearLayout headerButtons = new LinearLayout(this);
+
+            final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1.0f);
+//            Resources r = getResources();
+//            layoutParams.setMargins((int) r.getDimension(R.dimen.activity_horizontal_margin), (int) r.getDimension(R.dimen.activity_vertical_margin), (int) r.getDimension(R.dimen.activity_horizontal_margin), (int) r.getDimension(R.dimen.activity_vertical_margin));
+//            headerButtons.setLayoutParams(layoutParams);
+
+            final Button modifyButton = new Button(this);
+            modifyButton.setLayoutParams(layoutParams);
+            modifyButton.setBackgroundResource(R.drawable.button_background);
+            modifyButton.setText("Modify");
+            modifyButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent = new Intent(NamakApplication.getAppContext(), ModifyCommandActivity.class);
+                    intent.putExtra(ModifyCommandActivity.COMMAND_JSON, mJSONCommand.toString());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivityForResult(intent, COMMAND_ADJUST_REQUEST);
+                }
+            });
+            headerButtons.addView(modifyButton);
+
+            final View divider = new View(this);
+            divider.setLayoutParams(
+                    new LinearLayout.LayoutParams(
+//                            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()),  // 1dp
+                            (int) getResources().getDisplayMetrics().density,  // 1dp
+                            LinearLayout.LayoutParams.MATCH_PARENT)
+            );
+//            divider.setBackgroundResource(R.color.DarkBlue);
+            divider.setBackgroundResource(R.color.LighterBlue);
+            headerButtons.addView(divider);
+
             final Button executeButton = new Button(this);
+            executeButton.setLayoutParams(layoutParams);
+            executeButton.setBackgroundResource(R.drawable.button_background);
             executeButton.setText("Execute");
-            executeButton.setOnClickListener(new View.OnClickListener() { public void onClick(View v) {
-                mExecutionResultsView.removeHeaderView(executeButton);
-                execute();
-            } });
-            mExecutionResultsView.addHeaderView(executeButton);
+            executeButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mExecutionResultsView.removeHeaderView(headerButtons);
+                    execute();
+                }
+            });
+            headerButtons.addView(executeButton);
+
+            mExecutionResultsView.addHeaderView(headerButtons);
         }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == COMMAND_ADJUST_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    mJSONCommand = new JSONObject(data.getExtras().getString(ModifyCommandActivity.COMMAND_JSON));
+//                    mExecutionLogView = new LogView(this, mJSONCommand.getString("fun"), mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
+//                    mExecutionLogView.setTitle(mJSONCommand.getString("fun"), mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
+                    prepareCommand();
+                } catch (JSONException error) {
+                    Popup.error(this, "This should never happen!", 500, error);
+                }
+                return;
+            }
+        }
+        Popup.error(this, "This should never happen!", 600, null);
     }
 
     private void execute() {
@@ -221,15 +284,17 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         private String commandMsg;
         private Spannable commandText;
 
-        // This is only used for error messages
-        public LogView(Context context, @NonNull String error) {
+        public LogView(Context context) {
             super(context);
+        }
+
+        // This is only used for error messages
+        public void setError(@NonNull String error) {
             setTextColor(Color.RED);
             setText(error);
         }
 
-        public LogView(Context context /*, Boolean async*/, @NonNull String fun, @NonNull String tgt, @Nullable JSONArray arg) {
-            super(context);
+        public void setText(/*Boolean async,*/ @NonNull String fun, @NonNull String tgt, @Nullable JSONArray arg) {
             assert async != null;
 
 //            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

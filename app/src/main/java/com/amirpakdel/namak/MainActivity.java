@@ -156,7 +156,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 if (NamakApplication.getSaltMaster().getAuthToken() == null) {
                     Popup.error(mainActivity, getString(R.string.not_logged_in), 201, null);
-                    return false;
+                    // Here
+//                    return false;
                 }
                 Intent intent = new Intent(mainActivity, CommandExecutionActivity.class);
                 intent.putExtra(CommandExecutionActivity.COMMAND_GROUP_POSITION, groupPosition);

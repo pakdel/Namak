@@ -46,3 +46,23 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 300 DashboardAdapter
 400 SaltMaster
 500 GeneralSettingsActivity / DashboardSettingsActivity / SaltMasterSettingsActivity
+
+
+            Popup.error(mainActivity, getString(R.string.should_never_happen), 200, null);
+//            Popup.error(mainActivity, getString(R.string.incomplete_settings), 200, null);
+//            mDrawerLayout.closeDrawers();
+
+Popup.error(this, getString(R.string.incomplete_settings), 200, null);
+Popup.error(mainActivity, getString(R.string.should_never_happen), 201, null);
+Popup.error(mainActivity, getString(R.string.not_logged_in), 202, null);
+
+
+FIXME open when added SM or Dash
+FIXME do not refresh if not dashboard
+
+
+
+Settings: Do n ot go back if not complete
+
+DEVICE SHELL COMMAND: pm uninstall com.amirpakdel.namak
+DEVICE SHELL COMMAND: pm install -r "/data/local/tmp/com.amirpakdel.namak"
