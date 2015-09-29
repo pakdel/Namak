@@ -1,8 +1,6 @@
 package com.amirpakdel.namak;
 
 import android.content.SharedPreferences;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -56,7 +54,7 @@ public class SaltMaster {
 
         this.mAuthToken = null;
 
-        Toast.makeText(NamakApplication.getAppContext(), "Logging into " + mName + " (" + mBaseUrl + ") as " + mUsername, Toast.LENGTH_SHORT).show();
+        Popup.message(NamakApplication.getAppContext().getString(R.string.logging_in, mName, mUsername));
         JSONObject loginPayload = new JSONObject();
 
         try {
@@ -64,10 +62,7 @@ public class SaltMaster {
             loginPayload.put("username", mUsername);
             loginPayload.put("password", mPassword);
         } catch (JSONException error) {
-//            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.should_never_happen), 401, error);
-
-            Toast.makeText(NamakApplication.getAppContext(), "Could not generate the login payload!", Toast.LENGTH_SHORT).show();
-            Log.e("SaltMaster: Err.login", error.toString(), error);
+            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.should_never_happen), 401, error);
         }
         SaltRequest loginRequest = new SaltRequest(this, "login", loginPayload,
                 new Response.Listener<JSONObject>() {
@@ -75,12 +70,10 @@ public class SaltMaster {
                     public void onResponse(JSONObject response) {
                         try {
                             mAuthToken = response.getJSONArray("return").getJSONObject(0).getString("token");
-                            Toast.makeText(NamakApplication.getAppContext(), "Successfully logged into " + mName, Toast.LENGTH_LONG).show();
-                            Log.d("SaltMaster: login", "authToken = " + mAuthToken);
+                            Popup.message(NamakApplication.getAppContext().getString(R.string.logged_in, mName));
+                            NamakApplication.triggerSaltMasterListeners();
                         } catch (JSONException error) {
-                            Toast.makeText(NamakApplication.getAppContext(), "Unexpected response during login!", Toast.LENGTH_SHORT).show();
-                            Log.e("SaltMaster: login", error.toString(), error);
-                            Log.d("SaltMaster: login", response.toString().substring(0, 50));
+                            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.log_in_unexpected_response), 402, error);
                         }
                     }
                 },
@@ -88,8 +81,7 @@ public class SaltMaster {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         mAuthToken = null;
-                        Toast.makeText(NamakApplication.getAppContext(), "Login failed!", Toast.LENGTH_SHORT).show();
-                        Log.e("SaltMaster: login.Err", error.toString(), error);
+                        Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.log_in_failed), 403, error);
                     }
                 });
         NamakApplication.addToVolleyRequestQueue(loginRequest);
@@ -99,33 +91,32 @@ public class SaltMaster {
         try {
             return new URL(new URL(mBaseUrl), path).toString();
         } catch (MalformedURLException error) {
-            // FIXME Add proper error handling
-            Log.e("SaltMaster", "getRelativeUrl: " + path + " is not a relative URL", error);
+            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.should_never_happen), 404, error);
             return null;
         }
     }
 
-    private String getDashboardFullUrl(String dashboardUrl) {
-        try {
-            return new URL(dashboardUrl).toString();
-        } catch (MalformedURLException e) {
-            // It's fine if dashboardUrl is not a full URL
-//            Log.e("SaltMaster: dashboard", dashboardUrl + " is not a URL", e);
-        }
-        try {
-            return new URL(new URL(mBaseUrl), dashboardUrl).toString();
-        } catch (MalformedURLException e) {
-            Log.e("SaltMaster: dashboard", mBaseUrl + " is not a URL", e);
-        }
-        return mBaseUrl + dashboardUrl;
-    }
+//    private String getDashboardFullUrl(String dashboardUrl) {
+//        try {
+//            return new URL(dashboardUrl).toString();
+//        } catch (MalformedURLException e) {
+//            // It's fine if dashboardUrl is not a full URL
+////            Log.e("SaltMaster: dashboard", dashboardUrl + " is not a URL", e);
+//        }
+//        try {
+//            return new URL(new URL(mBaseUrl), dashboardUrl).toString();
+//        } catch (MalformedURLException e) {
+//            Log.e("SaltMaster: dashboard", mBaseUrl + " is not a URL", e);
+//        }
+//        return mBaseUrl + dashboardUrl;
+//    }
     public String getAuthToken() {
         return mAuthToken;
     }
     public String getName() {
         if (mAuthToken == null) {
             return NamakApplication.getAppContext().getString(R.string.not_logged_in);
-        };
+        }
         return mName;
     }
 
@@ -134,25 +125,25 @@ public class SaltMaster {
         return mBaseUrl;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.mBaseUrl = baseUrl;
-        this.login();
-    }
-
-    public void setEauth(String eauth) {
-        this.mEauth = eauth;
-        this.login();
-    }
-
-    public void setUsername(String username) {
-        this.mUsername = username;
-        this.login();
-    }
-
-    public void setPassword(String password) {
-        this.mPassword = password;
-        this.login();
-    }
+//    public void setBaseUrl(String baseUrl) {
+//        this.mBaseUrl = baseUrl;
+//        this.login();
+//    }
+//
+//    public void setEauth(String eauth) {
+//        this.mEauth = eauth;
+//        this.login();
+//    }
+//
+//    public void setUsername(String username) {
+//        this.mUsername = username;
+//        this.login();
+//    }
+//
+//    public void setPassword(String password) {
+//        this.mPassword = password;
+//        this.login();
+//    }
 
     public int getTimeout() {
         return mTimeout;

@@ -55,9 +55,12 @@ public class NamakApplication extends android.app.Application {
 
     // Currently we have only 1 DashboardListener:
     // - MainActivity which stops the refreshing animation (setRefreshing false)
-    private static final ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(2);
+    private static final ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(1);
     private static DashboardAdapter dashboardAdapter;
 
+    // Currently we have only 1 SaltMasterListener:
+    // - MainActivity which updates the title
+    private static final ArrayList<SaltMasterListener> mSaltMasterListeners = new ArrayList<>(1);
 
     public static Activity getForegroundActivity() { return foregroundActivity; }
     private static final class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
@@ -203,6 +206,21 @@ public class NamakApplication extends android.app.Application {
         dashboardAdapter.notifyDataSetChanged();
         for (DashboardListener dashboardListener : mDashboardListeners) {
             dashboardListener.onDashboardLoadFinished();
+        }
+    }
+
+    public interface SaltMasterListener {
+        void onLoginFinished();
+    }
+    public static void addSaltMasterListener(SaltMasterListener saltmasterListener) {
+        mSaltMasterListeners.add(saltmasterListener);
+        if (sm.getAuthToken() != null) {
+            saltmasterListener.onLoginFinished();
+        }
+    }
+    public static void triggerSaltMasterListeners() {
+        for (SaltMasterListener saltmasterListener : mSaltMasterListeners) {
+            saltmasterListener.onLoginFinished();
         }
     }
 

@@ -1,11 +1,12 @@
 package com.amirpakdel.namak;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -16,14 +17,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ModifyCommandActivity extends AppCompatActivity {
+public class CommandModificationActivity extends AppCompatActivity {
 
     public static final String COMMAND_JSON = "command_json";
     private int horizontal_padding, /*horizontal_padding_large,*/ vertical_padding, vertival_margin;
 
-    //    private int mCommandStringLengthEstimate;
     private JSONObject mJSONCommand;
-    //    private LinearLayout mCommandView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,29 +32,21 @@ public class ModifyCommandActivity extends AppCompatActivity {
 
         Resources r = getResources();
         horizontal_padding = (int) r.getDimension(R.dimen.activity_horizontal_padding);
-//        horizontal_padding_large = (int) r.getDimension(R.dimen.activity_horizontal_padding_large);
         vertical_padding = (int) r.getDimension(R.dimen.activity_vertical_padding);
         vertival_margin = (int) r.getDimension(R.dimen.activity_vertical_margin);
 
-        // TODO Use margin/padding of the layout instead of padding of views
         final LinearLayout commandLayout = new LinearLayout(this);
         commandLayout.setOrientation(LinearLayout.VERTICAL);
         commandLayout.setPadding(horizontal_padding, vertical_padding, horizontal_padding, vertical_padding);
 
         try {
-//            final String commandString = getIntent().getExtras().getString(COMMAND_JSON);
-//            mCommandStringLengthEstimate = commandString.length();
-//            mJSONCommand = new JSONObject(commandString);
             mJSONCommand = new JSONObject(getIntent().getExtras().getString(COMMAND_JSON));
 
-
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, vertival_margin, 0, 0);
 
             final Switch client = new Switch(this);
-//            tgt.setPadding(horizontal_padding_large, tgtLabel.getPaddingTop(), horizontal_padding, vertical_padding);
-            client.setText("Asynchronous execution");
+            client.setText(R.string.async);
             switch (mJSONCommand.getString("client")) {
                 case "local":
                     client.setChecked(false);
@@ -65,26 +56,22 @@ public class ModifyCommandActivity extends AppCompatActivity {
                     break;
                 default:
                     client.setEnabled(false);
-                    Popup.error(this, "This should never happen!", 600, null);
+                    Popup.error(this, getString(R.string.should_never_happen), 701, null);
 //                    return;
             }
             commandLayout.addView(client);
 
             final TextView tgtLabel = new TextView(this);
-//            tgtLabel.setPadding(horizontal_padding_large, vertical_padding, horizontal_padding, tgtLabel.getPaddingBottom());
             tgtLabel.setText("Targeting");
             commandLayout.addView(tgtLabel, layoutParams);
             final EditText tgt = new EditText(this);
-//            tgt.setPadding(horizontal_padding_large, tgtLabel.getPaddingTop(), horizontal_padding, vertical_padding);
             tgt.setText(mJSONCommand.getString("tgt"));
             commandLayout.addView(tgt);
 
             final TextView funLabel = new TextView(this);
             funLabel.setText("Function");
-//            funLabel.setPadding(horizontal_padding_large, vertical_padding, horizontal_padding, tgtLabel.getPaddingBottom());
             commandLayout.addView(funLabel, layoutParams);
             final EditText fun = new EditText(this);
-//            fun.setPadding(horizontal_padding_large, tgtLabel.getPaddingTop(), horizontal_padding, vertical_padding);
             fun.setText(mJSONCommand.getString("fun"));
             commandLayout.addView(fun);
 
@@ -94,29 +81,38 @@ public class ModifyCommandActivity extends AppCompatActivity {
             if (args != null) {
                 final TextView argLabel = new TextView(this);
                 argLabel.setText("Arguments");
-//                argLabel.setPadding(horizontal_padding_large, vertical_padding, horizontal_padding, tgtLabel.getPaddingBottom());
                 commandLayout.addView(argLabel, layoutParams);
 
                 for (int i = 0; i < argLen; i++) {
                     argViews[i] = new EditText(this);
-//                    argViews[i].setPadding(horizontal_padding_large, tgtLabel.getPaddingTop(), horizontal_padding, vertical_padding);
                     argViews[i].setText(args.getString(i));
                     commandLayout.addView(argViews[i]);
                 }
             }
 
-            final Button setButton = new Button(this);
-            setButton.setText("Set Parameters");
+            final LinearLayout footerButtons = new LinearLayout(this);
+            final NamakButton cancelButton = new NamakButton(this);
+            cancelButton.setText(R.string.cancel);
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    NavUtils.navigateUpFromSameTask((Activity) v.getContext());
+                }
+            });
+            footerButtons.addView(cancelButton);
+
+            final Divider divider = new Divider(this);
+            footerButtons.addView(divider);
+
+            final NamakButton setButton = new NamakButton(this);
+            setButton.setText(R.string.set_params);
             setButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-//                    final StringBuilder commandString = new StringBuilder(mCommandStringLengthEstimate);
-//                    commandString.append(String.format("{\"tgt\":\"%s\",\"fun\":\"%s\"", tgt.getText(), fun.getText()));
                     final StringBuilder commandString = new StringBuilder(
                             String.format("{\"client\":\"%s\",\"tgt\":\"%s\",\"fun\":\"%s\"",
-                                    client.isChecked()? "local_async" : "local", tgt.getText(), fun.getText()
+                                    client.isChecked() ? "local_async" : "local", tgt.getText(), fun.getText()
                             ));
 
-                    if (argLen>0) {
+                    if (argLen > 0) {
                         commandString.append(",\"arg\":[\"").append(argViews[0].getText()).append("\"");
                         for (int i = 1; i < argLen; i++) {
                             commandString.append(",\"").append(argViews[i].getText()).append("\"");
@@ -126,16 +122,15 @@ public class ModifyCommandActivity extends AppCompatActivity {
                     commandString.append("}");
 
                     Intent intent = new Intent();
-                    intent.putExtra(ModifyCommandActivity.COMMAND_JSON, (CharSequence) commandString);
+                    intent.putExtra(CommandModificationActivity.COMMAND_JSON, (CharSequence) commandString);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
             });
-            commandLayout.addView(setButton, layoutParams);
-
-
+            footerButtons.addView(setButton);
+            commandLayout.addView(footerButtons, layoutParams);
         } catch (JSONException error) {
-            Popup.error(this, "This should never happen!", 600, error);
+            Popup.error(this, getString(R.string.should_never_happen), 700, error);
         }
 
 
@@ -144,7 +139,6 @@ public class ModifyCommandActivity extends AppCompatActivity {
 //        scroll.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
 //                LayoutParams.FILL_PARENT));
         scroll.addView(commandLayout);
-//        setContentView(commandLayout);
         setContentView(scroll);
     }
 

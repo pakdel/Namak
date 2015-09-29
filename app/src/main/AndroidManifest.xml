@@ -71,7 +71,7 @@
         </activity>
 
         <activity
-            android:name=".ModifyCommandActivity"
+            android:name=".CommandModificationActivity"
             android:label="@string/title_activity_command_modification"
             android:parentActivityName=".CommandExecutionActivity">
             <meta-data

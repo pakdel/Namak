@@ -54,7 +54,7 @@ public class DashboardSettingsActivity extends NamakSettingsActivity {
             bindUrlPreferenceSummaryToValue(url);
             screen.addPreference(url);
 
-            // TODO
+            // TODO Implement Timeout
             Preference timeout = new Preference(getActivity());
             timeout.setTitle("Timeout");
             timeout.setSummary("Not implemented yet");
@@ -79,9 +79,6 @@ public class DashboardSettingsActivity extends NamakSettingsActivity {
                                         edit.remove("dashboard_" + dashboard + "_" + prefSuffix);
                                     }
                                     edit.apply();
-//                                    edit.commit();
-                                    // TODO Do we need to signal changes?
-//                                    recreateSaltMasterList();
                                     getActivity().finish();
                                 }
                             })

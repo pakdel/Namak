@@ -94,9 +94,6 @@ public class SaltMasterSettingsActivity extends NamakSettingsActivity {
                                         edit.remove("saltmaster_" + saltmaster + "_" + prefSuffix);
                                     }
                                     edit.apply();
-//                                    edit.commit();
-                                    // TODO Do we need to signal changes?
-//                                    recreateSaltMasterList();
                                     getActivity().finish();
                                 }
                             })
