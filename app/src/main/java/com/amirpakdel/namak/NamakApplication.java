@@ -55,9 +55,12 @@ public class NamakApplication extends android.app.Application {
 
     // Currently we have only 1 DashboardListener:
     // - MainActivity which stops the refreshing animation (setRefreshing false)
-    private static final ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(2);
+    private static final ArrayList<DashboardListener> mDashboardListeners = new ArrayList<>(1);
     private static DashboardAdapter dashboardAdapter;
 
+    // Currently we have only 1 SaltMasterListener:
+    // - MainActivity which updates the title
+    private static final ArrayList<SaltMasterListener> mSaltMasterListeners = new ArrayList<>(1);
 
     public static Activity getForegroundActivity() { return foregroundActivity; }
     private static final class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
@@ -206,6 +209,21 @@ public class NamakApplication extends android.app.Application {
         }
     }
 
+    public interface SaltMasterListener {
+        void onLoginFinished();
+    }
+    public static void addSaltMasterListener(SaltMasterListener saltmasterListener) {
+        mSaltMasterListeners.add(saltmasterListener);
+        if (sm.getAuthToken() != null) {
+            saltmasterListener.onLoginFinished();
+        }
+    }
+    public static void triggerSaltMasterListeners() {
+        for (SaltMasterListener saltmasterListener : mSaltMasterListeners) {
+            saltmasterListener.onLoginFinished();
+        }
+    }
+
     public static void loadDashboards() {
         loadDashboards(false);
     }
@@ -257,10 +275,15 @@ public class NamakApplication extends android.app.Application {
             triggerDashboardListeners();
             return;
         }
+        // DashboardAdapter.getChildId cannot handle dashboards with more than 99 items
+        // DashboardAdapter.getChildrenCount handles the limit
+        if (newDashboard.length() > 99) {
+            Popup.error(NamakApplication.foregroundActivity, context.getString(R.string.dashboard_too_long, dashboardName), 104, null);
+        }
         JSONException parseError = null;
         for (int i = 0; i < newDashboard.length(); i++) {
             JSONObject dashboardJSON = null;
-            String title = "Not Set Yet!";
+            String title;  // = "Not Set Yet!";
             try {
                 dashboardJSON = newDashboard.getJSONObject(i);
                 title = dashboardJSON.optString("title");

@@ -19,13 +19,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.HashSet;
 
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NamakApplication.DashboardListener {
+public class MainActivity extends AppCompatActivity
+        implements SwipeRefreshLayout.OnRefreshListener,
+                   NamakApplication.DashboardListener,
+                   NamakApplication.SaltMasterListener {
 
     private ListView mDrawerListView;
+    private ExpandableListView mMainView;
+    private TextView mHeader;
 
     private void setSaltMasterNames() {
         mDrawerListView.setAdapter(new ArrayAdapter<>(
@@ -59,15 +65,35 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         NamakApplication.getPref().registerOnSharedPreferenceChangeListener(prefChanged);
         setSaltMasterNames();
 
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-
+        final SharedPreferences prefs = NamakApplication.getPref();
+        // It should be also handled properly in the Settings activity
+        if (prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1
+                || prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1) {
+            Intent intent = new Intent(NamakApplication.getAppContext(), GeneralSettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            return;
+        }
         if (NamakApplication.getSaltMaster().getAuthToken() == null) {
+            // It is too much to do all four!
+            // mDrawerListView.setEnabled(false) does nothing!
+            // We would need a callback from SaltMaster.login() to remove the header view
+            if (mHeader == null) {
+                mHeader = new TextView(this);
+                NamakApplication.getDashboardAdapter().setPadding(mHeader);
+                mHeader.setTextColor(Color.DKGRAY);
+                mHeader.setText(R.string.log_in);
+                mMainView.addHeaderView(mHeader);
+            }
             mDrawerLayout.openDrawer(GravityCompat.START);
             Popup.message(getString(R.string.log_in));
-        } else {
-            setTitle(NamakApplication.getSaltMaster().getName());
+        } else {  // There is at least one Salt Master and we are already authenticated
+            onLoginFinished();
         }
+
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -98,12 +124,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                setTitle(NamakApplication.getSaltMaster().getName());
+//                setTitle(NamakApplication.getSaltMaster().getName());
+                updateSaltMasterStatus();
             }
 
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                setTitle(R.string.app_name);
+//                setTitle(R.string.app_name);
+                updateSaltMasterStatus();
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -124,10 +152,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mDrawerListView.setLayoutParams(drawerListViewParams);
         mDrawerListView.setBackgroundColor(Color.WHITE);
 
-        ExpandableListView mainView = new ExpandableListView(this);
-        mainView.setLayoutParams(new ListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mainView.setAdapter(NamakApplication.getDashboardAdapter());
-        mainView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        mMainView = new ExpandableListView(this);
+        mMainView.setLayoutParams(new ListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mMainView.setAdapter(NamakApplication.getDashboardAdapter());
+        mMainView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 if (NamakApplication.getSaltMaster().getAuthToken() == null) {
@@ -150,23 +178,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setEnabled(true);
 //        mSwipeRefreshLayout.setRefreshing(false);
-        mSwipeRefreshLayout.addView(mainView);
+        mSwipeRefreshLayout.addView(mMainView);
         NamakApplication.addDashboardListener(this);
+        NamakApplication.addSaltMasterListener(this);
 
         mDrawerLayout.addView(mSwipeRefreshLayout);
         mDrawerLayout.addView(mDrawerListView);
 
         setContentView(mDrawerLayout);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        final SharedPreferences prefs = NamakApplication.getPref();
-        if (prefs.getStringSet("saltmasters", new HashSet<String>()).size() < 1
-         || prefs.getStringSet("dashboards", new HashSet<String>()).size() < 1) {
-            Popup.error(mainActivity, getString(R.string.incomplete_settings), 200, null);
-        }
     }
 
     @Override
@@ -203,5 +222,36 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onDashboardLoadFinished() {
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void updateSaltMasterStatus() {
+        final SaltMaster sm = NamakApplication.getSaltMaster();
+        if (sm.getAuthToken() == null) {
+            // It is too much to do all four!
+            // mDrawerListView.setEnabled(false) does nothing!
+            setTitle(R.string.app_name);
+            if (mHeader == null) {
+                mHeader = new TextView(this);
+                NamakApplication.getDashboardAdapter().setPadding(mHeader);
+                mHeader.setTextColor(Color.DKGRAY);
+                mHeader.setText(R.string.log_in);
+                mMainView.addHeaderView(mHeader);
+            }
+            // Force opening the left drawer is too intrusive!
+            // mDrawerLayout.openDrawer(GravityCompat.START);
+            Popup.message(getString(R.string.log_in));
+        } else {  // There is at least one Salt Master and we are already authenticated
+            // mDrawerListView.setEnabled(false) does nothing!
+            setTitle(NamakApplication.getSaltMaster().getName());
+            if (mHeader != null) {
+                mMainView.removeHeaderView(mHeader);
+            }
+            // mDrawerLayout.closeDrawers();
+        }
+    }
+
+    @Override
+    public void onLoginFinished() {
+        updateSaltMasterStatus();
     }
 }

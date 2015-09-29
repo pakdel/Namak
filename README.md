@@ -1,6 +1,8 @@
 # Namak
 Salt Net API client
 
+Here is the Alpha testing opt-in link: https://play.google.com/apps/testing/com.amirpakdel.namak
+
 Sample Dashboards:
 - This one has a bunch of faulty items for testing:
  https://www.dropbox.com/s/vs4q2jfpnkj5d2w/dashboard-sample.json?dl=1
@@ -18,39 +20,52 @@ Dashboards are JSON arrays of JSON objects with following attributes:
 - arg (optional): arguments to pass to the function
 The only attribute that is not a direct map of [Salt API](http://docs.saltstack.com/en/latest/ref/clients/) is the title, which is optional.
 
-## FIXME
-- Should we just increase SaltMaster pref no., instead of finding holes in the sequence?
-
 ## TODO
-- Restrict number of dashboards to 99 (required by DashbordAdapter.getChildId)
-- Do not accept dashboards with null URL
-
+- Translate commandMsg in CommandExecutionActivity
+- Support targeting (tgt_type) other than glob (Grain, Pillar and Compound)
+- Support clients other than local (Start by runner)
+    - Salt Runner
+```
+{
+    "client": "runner",
+    "fun": "jobs.lookup_jid",
+    "jid": "20130603122505459265"
+}
+```
 - Dashboards
-    - can be absolute or relative
     - can have their own Timeout
-    - Do not reload all of them, if just one is changed
+    - can be absolute or relative
+        - Re-Implement relative dashboard URL: need to be reloaded by switching to another Salt Master
 - Add more verbose error messages
-- Grab and cache a list of Minions
 - Make sure Volley does not cache execution URLs
 - Execution Activity:
     - re-run option
 
-- Validate URLs in EditTextPreference
-    - use onPreferenceChangeListener
-
-- Load old (previous) style of preferences as the default
-
 - onDestroy: log out
 - onTrimMemory: clean up dashboards and stuff ....
 - onPause: memorize current SaltMaster and authToken
-- Re-Implement relative dashboard URL:
-    - Relative Dashboards need to be reloaded by switching to another Salt Master
 - Testing:
     - permissions
+- Grab and cache a list of Minions
+- Should we just increase SaltMaster pref no., instead of finding holes in the sequence?
 
 
 ## Error Code categories
-100 NamakApplication
-200 MainActivity
-300 DashboardAdapter
-400 SaltMaster
+- 100 NamakApplication
+- 200 MainActivity
+- 300 DashboardAdapter
+- 400 SaltMaster
+- 500 GeneralSettingsActivity / DashboardSettingsActivity / SaltMasterSettingsActivity
+- 600 CommandExecutionActivity
+- 700 CommandModificationActivity
+
+
+### Validations before pull request
+- TODO
+- FIXME
+- "Here" comments
+- Toast
+- Duplicate Popup.error
+- Popup.error without getString
+- setText
+- Verify Log.e and Log.d
