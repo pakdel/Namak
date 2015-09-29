@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="LightBlue">#c0e0ff</color>
-    <color name="DarkBlue">#001eff</color>
-    <color name="DarkerBlue">#000f80</color>
+    <color name="LighterBlue">#d8f0ff</color> <!--#d2f0ff-->
+    <color name="LightBlue">#c0e0ff</color>   <!--#b4d2ff-->
+    <color name="DarkBlue">#001eff</color>    <!--#000f80-->
+    <color name="DarkerBlue">#000f80</color>  <!--#000840-->
+    <color name="DarkestBlue">#000840</color>
 </resources>

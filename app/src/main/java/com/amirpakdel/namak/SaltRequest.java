@@ -11,7 +11,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,16 +19,16 @@ class SaltRequest extends JsonObjectRequest {
         @Override
         public void onResponse(JSONObject response) {
             try {
-                Log.d("SaltReq: Resp FB", response.toString(2).substring(0, 50));
+                Log.d("SaltReq: Resp", response.toString(2).substring(0, 50));
             } catch (JSONException e) {
-                Log.d("SaltReq: Resp FB", response.toString().substring(0, 50));
+                Log.d("SaltReq: Resp", response.toString().substring(0, 50));
             }
         }
     };
     private static final Response.ErrorListener defaultErrorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e("SaltReq: Err.Resp FB", error.toString(), error);
+            Log.e("SaltReq: Err.Resp", error.toString(), error);
         }
     };
     private final String mAuthToken;
@@ -38,8 +37,8 @@ class SaltRequest extends JsonObjectRequest {
         super(sm.getRelativeUrl(api), jsonRequest,
                 (listener != null) ? listener : defaultListener,
                 (errorListener != null) ? errorListener : defaultErrorListener);
-        this.mAuthToken = sm.getAuthToken();
-        this.setRetryPolicy(new DefaultRetryPolicy(sm.getTimeout() * 1000, 1, 1.0f));
+        mAuthToken = sm.getAuthToken();
+        setRetryPolicy(new DefaultRetryPolicy(sm.getTimeout() * 1000, 1, 1.0f));
     }
 
     @Override

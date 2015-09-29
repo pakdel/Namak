@@ -5,20 +5,36 @@
 
 
 
-    <string name="helpPageURL" translatable="false">"http://www.amirpakdel.com/2015/09/10/namak/#%03d"</string>
+    <string name="helpPageURL" translatable="false">"http://namak.amirpakdel.com/errors.html#%03d"</string>
     <string name="details">Details</string>
 
     <string name="dashboard_load_succeeded">Loaded "%1$s" dashboard</string>
     <string name="dashboard_load_failed_get">Unexpected response when getting "%1$s" dashboard</string>
     <string name="dashboard_load_null">Got a null response for "%1$s" dashboard</string>
     <string name="dashboard_load_failed_parse">Failed to load "%1$s" dashboard</string>
+    <string name="dashboard_too_long">"%1$s" dashboard is too big!</string>
     <string name="dashboard_bad_item">Incorrect / Disabled</string>
 
+    <string name="async">Asynchronous execution</string>
+
+    <string name="incomplete_settings">Incomplete settings</string>
     <string name="should_never_happen">This should never happen!</string>
+
     <string name="not_logged_in">Not logged in</string>
     <string name="log_in">Choose a Salt Master to login</string>
-    <string name="incomplete_settings">Incomplete settings</string>
+    <string name="logging_in">Logging into "%1$s" as %2$s</string>
+    <string name="logged_in">Successfully logged into "%1$s"</string>
+    <string name="log_in_unexpected_response">Unexpected response during login!</string>
+    <string name="log_in_failed">Login failed!</string>
 
+    <string name="wrong_client">Client type "%1$s" is not supported!</string>
+    <string name="no_client">No client type found!</string>
+    <string name="no_fun_tgt">Either of fun or tgt not found!</string>
+    <string name="pull_for_results">Pull to check for the the results</string>
+    <string name="exec_failed">Failed to run the command!</string>
+    <string name="exec_unexpected_response">Unexpected response during command execution!</string>
+    <string name="job_failed">Failed to run the command!</string>
+    <string name="job_unexpected_response">Failed to check for execution results!</string>
 
     <string name="title_minions" translatable="false">Minions</string>
     <string name="title_cloud" translatable="false">Cloud</string>
@@ -26,14 +42,20 @@
     <string name="title_wheels" translatable="false">Wheels</string>
 
     <string name="action_settings">Settings</string>
-    <string name="title_activity_command_execution">Command Execution</string>
 
     <string name="dashboard_item_title" formatted="false">execution of %fun$s on %tgt$s with [no arguments | following arguments: %arg$s]</string>
 
+    <string name="modify">Modify</string>
+    <string name="execute">Execute</string>
+    <string name="set_params">Set Parameters</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
     <!--<string name="title_activity_main">%1$s > %2$s</string>-->
     <string name="title_activity_general_settings">Settings</string>
     <string name="title_activity_saltmaster_settings">Salt Master Settings</string>
     <string name="title_activity_dashboard_settings">Dashboard Settings</string>
+    <string name="title_activity_command_execution">Command Execution</string>
+    <string name="title_activity_command_modification">Command Modification</string>
 </resources>

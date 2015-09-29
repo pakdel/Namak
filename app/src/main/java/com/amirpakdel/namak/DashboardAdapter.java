@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +44,8 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
         // Same as getGroupCount():
         // We can cache it, and then update it when notifyDataSetChanged() is called;
         // but I think it would be an overkill!
-        return NamakApplication.getDashboards().valueAt(i).length();
+        // Dashboards are limited to a maximum of 99 items
+        return Math.min(NamakApplication.getDashboards().valueAt(i).length(), 99);
     }
 
     @Override
@@ -70,19 +70,19 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int i, int i1) {
+        // Dashboards are limited to a maximum of 99 items
         return i * 1000 + i1;
     }
 
     @Override
     public boolean hasStableIds() {
-        // TODO maybe true
         return false;
     }
 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = new TextView(context, null);
+            view = new TextView(context);
             view.setPadding(horizontal_padding_large, vertical_padding, horizontal_padding, vertical_padding);
             ((TextView) view).setTextColor(Color.BLACK);
             ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_PX, large_text);
@@ -96,7 +96,7 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = new TextView(context, null);
+            view = new TextView(context);
             view.setPadding(horizontal_padding, vertical_padding, horizontal_padding, vertical_padding);
             ((TextView) view).setTextColor(Color.BLACK);
         }
@@ -114,5 +114,9 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int i, int i1) {
         return true;
+    }
+
+    public void setPadding(TextView v) {
+        v.setPadding(horizontal_padding, vertical_padding, horizontal_padding, vertical_padding);
     }
 }

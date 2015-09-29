@@ -1,6 +1,8 @@
 package com.amirpakdel.namak;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,14 +14,11 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -27,12 +26,12 @@ import com.android.volley.VolleyError;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+// TODO Translate commandMsg
 
 public class CommandExecutionActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
-
     public static final String COMMAND_GROUP_POSITION = "command_group_position";
     public static final String COMMAND_CHILD_POSITION = "command_child_position";
+    static final int COMMAND_ADJUST_REQUEST = 0;
     private JSONObject mJSONCommand;
     private Boolean async;
     private String mJID;
@@ -47,28 +46,24 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         super.onCreate(savedInstanceState);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        prepareCommand();
-        setupViews();
-    }
 
-
-    private void prepareCommand() {
+        mExecutionLogView = new LogView(this);
         try {
             mJSONCommand = NamakApplication.getDashboardItem(
                     getIntent().getExtras().getInt(COMMAND_GROUP_POSITION),
                     getIntent().getExtras().getInt(COMMAND_CHILD_POSITION));
+            prepareCommand();
         } catch (JSONException error) {
-            // This should never happen
-            mExecutionLogView = new LogView(this,
-                    "Failed to find Dashboard Item "
-                    + getIntent().getExtras().getInt(COMMAND_GROUP_POSITION)
-                    + " / " + getIntent().getExtras().getInt(COMMAND_CHILD_POSITION));
-            Log.e("CmdExec: onCreate", error.toString(), error);
+            Popup.error(this, getString(R.string.should_never_happen), 600, error);
             assert mJSONCommand == null;
             assert async == null;
             return;
         }
+        setupViews();
+    }
 
+    private void prepareCommand() {
+        assert mJSONCommand != null;
         try {
             switch (mJSONCommand.getString("client")) {
                 case "local":
@@ -79,24 +74,22 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
                     break;
                 default:
                     async = null;
-                    mExecutionLogView = new LogView(this, "Client type '" + mJSONCommand.getString("client") + "' is not supported!");
+                    mExecutionLogView.setError(this, getString(R.string.wrong_client, mJSONCommand.getString("client")), 602, null);
                     // mJSONCommand != null
                     // async == null
                     return;
             }
         } catch (JSONException error) {
-            mExecutionLogView = new LogView(this, "Failed to find the client type!");
-            Log.e("CmdExec: onCreate", error.toString(), error);
+            mExecutionLogView.setError(this, getString(R.string.no_client), 601, error);
             assert mJSONCommand != null;
             assert async == null;
             return;
         }
 
         try {
-            mExecutionLogView = new LogView(this, mJSONCommand.getString("fun"), mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
+            mExecutionLogView.setText(mJSONCommand.getString("fun"), mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
         } catch (JSONException error) {
-            mExecutionLogView = new LogView(this, "Failed to find either fun or tgt: " + error.toString());
-            Log.e("CmdExec: onCreate", error.toString(), error);
+            mExecutionLogView.setError(this, getString(R.string.no_fun_tgt), 603, error);
             assert mJSONCommand != null;
             assert async != null;
             mJSONCommand = null;
@@ -137,14 +130,56 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         if (NamakApplication.getAutoExecute()) {
             execute();
         } else {
-            final Button executeButton = new Button(this);
-            executeButton.setText("Execute");
-            executeButton.setOnClickListener(new View.OnClickListener() { public void onClick(View v) {
-                mExecutionResultsView.removeHeaderView(executeButton);
-                execute();
-            } });
-            mExecutionResultsView.addHeaderView(executeButton);
+            final LinearLayout headerButtons = new LinearLayout(this);
+
+//            final Resources r = getResources();
+//            layoutParams.setMargins((int) r.getDimension(R.dimen.activity_horizontal_margin), (int) r.getDimension(R.dimen.activity_vertical_margin), (int) r.getDimension(R.dimen.activity_horizontal_margin), (int) r.getDimension(R.dimen.activity_vertical_margin));
+//            headerButtons.setLayoutParams(layoutParams);
+
+            final NamakButton modifyButton = new NamakButton(this);
+            modifyButton.setText(R.string.modify);
+            modifyButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent = new Intent(NamakApplication.getAppContext(), CommandModificationActivity.class);
+                    intent.putExtra(CommandModificationActivity.COMMAND_JSON, mJSONCommand.toString());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivityForResult(intent, COMMAND_ADJUST_REQUEST);
+                }
+            });
+            headerButtons.addView(modifyButton);
+
+            final Divider divider = new Divider(this);
+            headerButtons.addView(divider);
+
+            final NamakButton executeButton = new NamakButton(this);
+            executeButton.setText(R.string.execute);
+            executeButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mExecutionResultsView.removeHeaderView(headerButtons);
+                    execute();
+                }
+            });
+            headerButtons.addView(executeButton);
+
+            mExecutionResultsView.addHeaderView(headerButtons);
         }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == COMMAND_ADJUST_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    mJSONCommand = new JSONObject(data.getExtras().getString(CommandModificationActivity.COMMAND_JSON));
+                    prepareCommand();
+                } catch (JSONException error) {
+                    Popup.error(this, getString(R.string.should_never_happen), 611, error);
+                }
+//            } else {
+//                Popup.message(String.format("Nothing has changed: %d / %d", requestCode, resultCode));
+            }
+            return;
+        }
+        Popup.error(this, getString(R.string.should_never_happen), 610, null);
     }
 
     private void execute() {
@@ -153,22 +188,18 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Log.d("CmdExec: cmd", response.toString(2));
                             if (async) {
                                 mJID = response.getJSONArray("return").getJSONObject(0).getString("jid");
-                                Log.d("CmdExec: cmd", "JID: " + mJID);
                                 mExecutionLogView.gotJID();
                                 mSwipeRefreshLayout.setEnabled(true);
-                                Toast.makeText(NamakApplication.getAppContext(), "Pull to check for the the results", Toast.LENGTH_SHORT).show();
+                                Popup.message(getString(R.string.pull_for_results));
                             } else {
                                 mExecutionResultsListAdapter.setData(response.getJSONArray("return").getJSONObject(0));
                                 mExecutionLogView.finished();
                             }
                         } catch (JSONException error) {
                             mExecutionLogView.finished();
-                            Toast.makeText(NamakApplication.getAppContext(), "Failed to run the command!", Toast.LENGTH_SHORT).show();
-                            Log.e("CmdExec: cmd", error.toString(), error);
-                            Log.d("CmdExec: cmd", response.toString().substring(0, 50));
+                            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.exec_unexpected_response), 621, error);
                         }
                     }
                 },
@@ -176,8 +207,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         mExecutionLogView.finished();
-                        Toast.makeText(NamakApplication.getAppContext(), "Failed to run the command!", Toast.LENGTH_SHORT).show();
-                        Log.e("Main: cmd.Err", error.toString(), error);
+                        Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.exec_failed), 620, error);
                     }
                 });
 
@@ -192,14 +222,11 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Log.d("CmdExec: jid", response.toString(2));
                             mExecutionResultsListAdapter.setData(response.getJSONArray("return").getJSONObject(0));
                             mExecutionLogView.finished();
                             mSwipeRefreshLayout.setEnabled(false);
                         } catch (JSONException error) {
-                            Toast.makeText(NamakApplication.getAppContext(), "Failed to get JID " + mJID, Toast.LENGTH_SHORT).show();
-                            Log.e("CmdExec: jid", error.toString(), error);
-                            Log.d("CmdExec: jid", response.toString().substring(0, 50));
+                            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.job_unexpected_response), 623, error);
 //                        mSwipeRefreshLayout.setEnabled(true);
                         }
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -210,8 +237,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
                     public void onErrorResponse(VolleyError error) {
 //                        mSwipeRefreshLayout.setEnabled(true);
                         mSwipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(NamakApplication.getAppContext(), "Failed to run the command!", Toast.LENGTH_SHORT).show();
-                        Log.e("Main: jid.Err", error.toString(), error);
+                        Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.job_failed), 622, error);
                     }
                 });
         NamakApplication.addToVolleyRequestQueue(jidRequest);
@@ -221,15 +247,22 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         private String commandMsg;
         private Spannable commandText;
 
-        // This is only used for error messages
-        public LogView(Context context, @NonNull String error) {
+        public LogView(Context context) {
             super(context);
-            setTextColor(Color.RED);
-            setText(error);
         }
 
-        public LogView(Context context /*, Boolean async*/, @NonNull String fun, @NonNull String tgt, @Nullable JSONArray arg) {
-            super(context);
+        // This is only used for error messages
+        public void setError(@NonNull final Activity parent, @NonNull CharSequence text, final int code, @Nullable Throwable error) {
+            Popup.error(parent, text, code, error);
+            // Having the "error" icon shown by setError(text) is enough
+            // setTextColor(Color.RED);
+            setText(text);
+            setError(text);
+            // requestFocus changes nothing
+            // requestFocus();
+        }
+
+        public void setText(/*Boolean async,*/ @NonNull String fun, @NonNull String tgt, @Nullable JSONArray arg) {
             assert async != null;
 
 //            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
