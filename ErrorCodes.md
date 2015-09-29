@@ -3,8 +3,8 @@
 | CODE |                          DETAILS                                     |
 | ---- | -------------------------------------------------------------------- |
 |  000 | Is added to non-production releases for testing |
-|  100 | Could not load the dashboard. Please check your dashboard’s URL to be correct and the contents of the page to be a JSON array as documented in the README.md file. |
 |  1xx | __Errors coming from NamakApplication__ |
+|  100 | Could not load the dashboard. Please check your dashboard’s URL to be correct and the contents of the page to be a JSON array as documented in the README.md file. |
 |  101 | Could not load the dashboard. Got a null response when trying to get the Dashboard URL. |
 |  102 | Could not load the dashboard. Please make sure your dashboard has a valid JSON with the syntax specified in the documentation. |
 |  103 | This should never happen! In dashboardJSON neither "title" key is null, nor the value is non-finite number. |
@@ -15,7 +15,6 @@
 |  3xx | __Errors coming from DashboardAdapter__ |
 |  301 | This should never happen! In getChild, we always get an item that exists. |
 |  302 | This should never happen! In getChildView, we already know that "title" exists. |
-|  302 | . |
 |  4xx | __Errors coming from SaltMaster__ |
 |  401 | This should never happen! In SaltMaster neither of "eauth", "username" and "password" keys is null, nor the value is non-finite number. |
 |  402 | Unexpected response during login! Verify the Salt Net API service to be up and responding properly to login requests. |

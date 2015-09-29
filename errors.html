@@ -11,11 +11,21 @@
   <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
   <link rel="shortcut icon" href="/favIcon_32x32.png" />
 
-
   <!--[if lt IE 9]>
   <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
+  <style>
+    table tr td {
+      text-align: left;
+      vertical-align: top;
+    }
+
+    table tr td:first-child {
+      text-align: center;
+      vertical-align: top;
+    }
+  </style>
   <title>Namak by pakdel</title>
 </head>
 
@@ -46,12 +56,8 @@
           </thead>
           <tbody>
             <tr>
-              <td>000</td>
+              <td><a name="000">000</a></td>
               <td>Is added to non-production releases for testing</td>
-            </tr>
-            <tr>
-              <td>100</td>
-              <td>Could not load the dashboard. Please check your dashboard’s URL to be correct and the contents of the page to be a JSON array as documented in the README.md file.</td>
             </tr>
             <tr>
               <td>1xx</td>
@@ -60,19 +66,23 @@
               </td>
             </tr>
             <tr>
-              <td>101</td>
+              <td><a name="100">100</a></td>
+              <td>Could not load the dashboard. Please check your dashboard’s URL to be correct and the contents of the page to be a JSON array as documented in the README.md file.</td>
+            </tr>
+            <tr>
+              <td><a name="101">101</a></td>
               <td>Could not load the dashboard. Got a null response when trying to get the Dashboard URL.</td>
             </tr>
             <tr>
-              <td>102</td>
+              <td><a name="102">102</a></td>
               <td>Could not load the dashboard. Please make sure your dashboard has a valid JSON with the syntax specified in the documentation.</td>
             </tr>
             <tr>
-              <td>103</td>
+              <td><a name="103">103</a></td>
               <td>This should never happen! In dashboardJSON neither &quot;title&quot; key is null, nor the value is non-finite number.</td>
             </tr>
             <tr>
-              <td>104</td>
+              <td><a name="104">104</a></td>
               <td>Dashboard is too big! Each dashboard can have up to 99 commands.</td>
             </tr>
             <tr>
@@ -82,11 +92,11 @@
               </td>
             </tr>
             <tr>
-              <td>200</td>
+              <td><a name="200">200</a></td>
               <td>Incomplete settings. You will need at least one Salt Master and one Dashboard set up. Open settings page from the menu (or the wrench icon in the title bar).</td>
             </tr>
             <tr>
-              <td>201</td>
+              <td><a name="201">201</a></td>
               <td>Not logged in. Open the left drawer and choose a SaltMaster to log into.</td>
             </tr>
             <tr>
@@ -96,16 +106,12 @@
               </td>
             </tr>
             <tr>
-              <td>301</td>
+              <td><a name="301">301</a></td>
               <td>This should never happen! In getChild, we always get an item that exists.</td>
             </tr>
             <tr>
-              <td>302</td>
+              <td><a name="302">302</a></td>
               <td>This should never happen! In getChildView, we already know that &quot;title&quot; exists.</td>
-            </tr>
-            <tr>
-              <td>302</td>
-              <td>.</td>
             </tr>
             <tr>
               <td>4xx</td>
@@ -114,19 +120,19 @@
               </td>
             </tr>
             <tr>
-              <td>401</td>
+              <td><a name="401">401</a></td>
               <td>This should never happen! In SaltMaster neither of &quot;eauth&quot;, &quot;username&quot; and &quot;password&quot; keys is null, nor the value is non-finite number.</td>
             </tr>
             <tr>
-              <td>402</td>
+              <td><a name="402">402</a></td>
               <td>Unexpected response during login! Verify the Salt Net API service to be up and responding properly to login requests.</td>
             </tr>
             <tr>
-              <td>403</td>
+              <td><a name="403">403</a></td>
               <td>Login failed! Verify your credentials.</td>
             </tr>
             <tr>
-              <td>404</td>
+              <td><a name="404">404</a></td>
               <td>This should never happen! We are generating relative URLs ourselves.</td>
             </tr>
             <tr>
@@ -136,7 +142,7 @@
               </td>
             </tr>
             <tr>
-              <td>500</td>
+              <td><a name="500">500</a></td>
               <td>Incomplete settings. At least one Salt Master and one Dashboard are required, with all of their fields set (even if the password is empty, it needs to be set).</td>
             </tr>
             <tr>
@@ -146,43 +152,43 @@
               </td>
             </tr>
             <tr>
-              <td>600</td>
+              <td><a name="600">600</a></td>
               <td>This should never happen! MainView always sends an item position that exists.</td>
             </tr>
             <tr>
-              <td>601</td>
+              <td><a name="601">601</a></td>
               <td>No client type found! Client field of dashboard item is required.</td>
             </tr>
             <tr>
-              <td>602</td>
+              <td><a name="602">602</a></td>
               <td>Client type not supported! Only supported client tyes are local and local_async.</td>
             </tr>
             <tr>
-              <td>603</td>
+              <td><a name="603">603</a></td>
               <td>Either of fun or tgt not found! Function (fun) and target (tgt) field of dashboard item is required.</td>
             </tr>
             <tr>
-              <td>610</td>
+              <td><a name="610">610</a></td>
               <td>This should never happen! onActivityResult should never receive any requestCode other than COMMAND_ADJUST_REQUEST.</td>
             </tr>
             <tr>
-              <td>611</td>
+              <td><a name="611">611</a></td>
               <td>This should never happen! CommandModificationActivity always returns a valid JSON.</td>
             </tr>
             <tr>
-              <td>620</td>
+              <td><a name="620">620</a></td>
               <td>Failed to run the command! Please verify the command and the Salt Net API service to be up and running.</td>
             </tr>
             <tr>
-              <td>621</td>
+              <td><a name="621">621</a></td>
               <td>Unexpected response during command execution! Either Synchronous execution did not return a &quot;return&quot; array, or Asynchronous execution did not return a &quot;jid&quot;.</td>
             </tr>
             <tr>
-              <td>622</td>
+              <td><a name="622">622</a></td>
               <td>Failed to check for execution results! Please verify the JID and the Salt Net API service to be up and running.</td>
             </tr>
             <tr>
-              <td>623</td>
+              <td><a name="623">623</a></td>
               <td>Unexpected response when checking for execution results! Did not receive a &quot;return&quot; array from server.</td>
             </tr>
             <tr>
@@ -192,11 +198,11 @@
               </td>
             </tr>
             <tr>
-              <td>700</td>
+              <td><a name="700">700</a></td>
               <td>This should never happen! CommandExecutionActivity always sends a valid JSON.</td>
             </tr>
             <tr>
-              <td>701</td>
+              <td><a name="701">701</a></td>
               <td>This should never happen! CommandExecutionActivity always sends a valid client type.</td>
             </tr>
           </tbody>
