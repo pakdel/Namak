@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+  <link rel="shortcut icon" href="/favIcon_32x32.png" />
+
+
+  <!--[if lt IE 9]>
+  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <title>Namak by pakdel</title>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <h1>Namak</h1>
+      <h2>Salt Net API client</h2>
+      <a href="https://github.com/pakdel/Namak" class="button">
+        <small>View project on</small> GitHub</a>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+        <h1>
+          <a id="namak" class="anchor" href="#namak" aria-hidden="true">
+            <span class="octicon octicon-link"></span>
+          </a>Error Codes</h1>
+        <p>Here is complete list of error codes:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>CODE</th>
+              <th>DETAILS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>000</td>
+              <td>Is added to non-production releases for testing</td>
+            </tr>
+            <tr>
+              <td>100</td>
+              <td>Could not load the dashboard. Please check your dashboard’s URL to be correct and the contents of the page to be a JSON array as documented in the README.md file.</td>
+            </tr>
+            <tr>
+              <td>1xx</td>
+              <td>
+                <strong>Errors coming from NamakApplication</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>101</td>
+              <td>Could not load the dashboard. Got a null response when trying to get the Dashboard URL.</td>
+            </tr>
+            <tr>
+              <td>102</td>
+              <td>Could not load the dashboard. Please make sure your dashboard has a valid JSON with the syntax specified in the documentation.</td>
+            </tr>
+            <tr>
+              <td>103</td>
+              <td>This should never happen! In dashboardJSON neither &quot;title&quot; key is null, nor the value is non-finite number.</td>
+            </tr>
+            <tr>
+              <td>104</td>
+              <td>Dashboard is too big! Each dashboard can have up to 99 commands.</td>
+            </tr>
+            <tr>
+              <td>2xx</td>
+              <td>
+                <strong>Errors coming from MainActivity</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>200</td>
+              <td>Incomplete settings. You will need at least one Salt Master and one Dashboard set up. Open settings page from the menu (or the wrench icon in the title bar).</td>
+            </tr>
+            <tr>
+              <td>201</td>
+              <td>Not logged in. Open the left drawer and choose a SaltMaster to log into.</td>
+            </tr>
+            <tr>
+              <td>3xx</td>
+              <td>
+                <strong>Errors coming from DashboardAdapter</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>301</td>
+              <td>This should never happen! In getChild, we always get an item that exists.</td>
+            </tr>
+            <tr>
+              <td>302</td>
+              <td>This should never happen! In getChildView, we already know that &quot;title&quot; exists.</td>
+            </tr>
+            <tr>
+              <td>302</td>
+              <td>.</td>
+            </tr>
+            <tr>
+              <td>4xx</td>
+              <td>
+                <strong>Errors coming from SaltMaster</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>401</td>
+              <td>This should never happen! In SaltMaster neither of &quot;eauth&quot;, &quot;username&quot; and &quot;password&quot; keys is null, nor the value is non-finite number.</td>
+            </tr>
+            <tr>
+              <td>402</td>
+              <td>Unexpected response during login! Verify the Salt Net API service to be up and responding properly to login requests.</td>
+            </tr>
+            <tr>
+              <td>403</td>
+              <td>Login failed! Verify your credentials.</td>
+            </tr>
+            <tr>
+              <td>404</td>
+              <td>This should never happen! We are generating relative URLs ourselves.</td>
+            </tr>
+            <tr>
+              <td>5xx</td>
+              <td>
+                <strong>Errors coming from NamakSettingsActivity (GeneralSettingsActivity / DashboardSettingsActivity / SaltMasterSettingsActivity)</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>500</td>
+              <td>Incomplete settings. At least one Salt Master and one Dashboard are required, with all of their fields set (even if the password is empty, it needs to be set).</td>
+            </tr>
+            <tr>
+              <td>6xx</td>
+              <td>
+                <strong>Errors coming from CommandExecutionActivity</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>600</td>
+              <td>This should never happen! MainView always sends an item position that exists.</td>
+            </tr>
+            <tr>
+              <td>601</td>
+              <td>No client type found! Client field of dashboard item is required.</td>
+            </tr>
+            <tr>
+              <td>602</td>
+              <td>Client type not supported! Only supported client tyes are local and local_async.</td>
+            </tr>
+            <tr>
+              <td>603</td>
+              <td>Either of fun or tgt not found! Function (fun) and target (tgt) field of dashboard item is required.</td>
+            </tr>
+            <tr>
+              <td>610</td>
+              <td>This should never happen! onActivityResult should never receive any requestCode other than COMMAND_ADJUST_REQUEST.</td>
+            </tr>
+            <tr>
+              <td>611</td>
+              <td>This should never happen! CommandModificationActivity always returns a valid JSON.</td>
+            </tr>
+            <tr>
+              <td>620</td>
+              <td>Failed to run the command! Please verify the command and the Salt Net API service to be up and running.</td>
+            </tr>
+            <tr>
+              <td>621</td>
+              <td>Unexpected response during command execution! Either Synchronous execution did not return a &quot;return&quot; array, or Asynchronous execution did not return a &quot;jid&quot;.</td>
+            </tr>
+            <tr>
+              <td>622</td>
+              <td>Failed to check for execution results! Please verify the JID and the Salt Net API service to be up and running.</td>
+            </tr>
+            <tr>
+              <td>623</td>
+              <td>Unexpected response when checking for execution results! Did not receive a &quot;return&quot; array from server.</td>
+            </tr>
+            <tr>
+              <td>7xx</td>
+              <td>
+                <strong>Errors coming from CommandModificationActivity</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>700</td>
+              <td>This should never happen! CommandExecutionActivity always sends a valid JSON.</td>
+            </tr>
+            <tr>
+              <td>701</td>
+              <td>This should never happen! CommandExecutionActivity always sends a valid client type.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <aside id="sidebar">
+        <a href="https://play.google.com/apps/testing/com.amirpakdel.namak" class="button">
+          <small>opt-in</small>
+          Alpha
+        </a>
+        <a href="https://github.com/pakdel/Namak/zipball/master" class="button">
+          <small>Download</small>
+          .zip file
+        </a>
+        <a href="https://github.com/pakdel/Namak/tarball/master" class="button">
+          <small>Download</small>
+          .tar.gz file
+        </a>
+
+        <p class="repo-owner">
+          <a href="https://github.com/pakdel/Namak"></a> is maintained by <a href="https://github.com/pakdel">pakdel</a>.</p>
+
+        <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+      </aside>
+    </div>
+  </div>
+</body>
+
+</html>
