@@ -33,6 +33,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
     public static final String COMMAND_CHILD_POSITION = "command_child_position";
     static final int COMMAND_ADJUST_REQUEST = 0;
     private JSONObject mJSONCommand;
+    private Boolean runner;
     private Boolean async;
     private String mJID;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -66,10 +67,16 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         assert mJSONCommand != null;
         try {
             switch (mJSONCommand.getString("client")) {
+                case "runner":
+                    runner = true;
+                    async = false;
+                    break;
                 case "local":
+                    runner = false;
                     async = false;
                     break;
                 case "local_async":
+                    runner = false;
                     async = true;
                     break;
                 default:
@@ -86,14 +93,28 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             return;
         }
 
+        String fun;
         try {
-            mExecutionLogView.setText(mJSONCommand.getString("fun"), mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
+            fun = mJSONCommand.getString("fun");
         } catch (JSONException error) {
-            mExecutionLogView.setError(this, getString(R.string.no_fun_tgt), 603, error);
+            mExecutionLogView.setError(this, getString(R.string.no_fun), 603, error);
             assert mJSONCommand != null;
             assert async != null;
             mJSONCommand = null;
-            // return;
+             return;
+        }
+        if (runner) {
+            mExecutionLogView.setText(fun, mJSONCommand.optJSONArray("args"));
+        } else {
+            try {
+                mExecutionLogView.setText(fun, mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
+            } catch (JSONException error) {
+                mExecutionLogView.setError(this, getString(R.string.no_tgt), 604, error);
+                assert mJSONCommand != null;
+                assert async != null;
+                mJSONCommand = null;
+                // return;
+            }
         }
     }
 
@@ -262,13 +283,22 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             // requestFocus();
         }
 
-        public void setText(/*Boolean async,*/ @NonNull String fun, @NonNull String tgt, @Nullable JSONArray arg) {
+        public void setText(/*Boolean async,*/ @NonNull String fun, @Nullable JSONArray args) {
             assert async != null;
 
-//            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//            Resources r = getResources();
-//            layoutParams.setMargins((int) r.getDimension(R.dimen.activity_horizontal_margin), (int) r.getDimension(R.dimen.activity_vertical_margin), (int) r.getDimension(R.dimen.activity_horizontal_margin), (int) r.getDimension(R.dimen.activity_vertical_margin));
-//            setLayoutParams(layoutParams);
+            commandMsg = "Execution of " + fun + " runner";
+            if (args == null) {
+                commandMsg += " with no arguments";
+            } else {
+                commandMsg += " with following arguments: " + args.toString();
+            }
+
+            commandText = new SpannableString(commandMsg);
+            commandText.setSpan(new ForegroundColorSpan(Color.BLACK), 13, 13 + fun.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            setText(commandText, TextView.BufferType.SPANNABLE);
+        }
+        public void setText(/*Boolean async,*/ @NonNull String fun, @NonNull String tgt, @Nullable JSONArray arg) {
+            assert async != null;
 
             commandMsg = async ? "Asynchronous" : "Synchronous";
             commandMsg += " execution of " + fun + " on " + tgt;
@@ -279,15 +309,12 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             }
 
             commandText = new SpannableString(commandMsg);
-//            commandText.setSpan(new RelativeSizeSpan(1.5f), 0, async ? 12 : 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             int offset = async ? 12 : 11;
             commandText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, async ? 12 : 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             offset += 14;
             commandText.setSpan(new ForegroundColorSpan(Color.BLACK), offset, offset + fun.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             offset += fun.length() + 4;
             commandText.setSpan(new ForegroundColorSpan(Color.BLACK), offset, offset + tgt.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            setTextColor(Color.BLACK);
-//            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
             setText(commandText, TextView.BufferType.SPANNABLE);
         }
 

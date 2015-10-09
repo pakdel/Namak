@@ -14,10 +14,10 @@ Sample Dashboards:
 You can add up to 99 dashboards, each with up to 99 commands.
 Dashboards are JSON arrays of JSON objects with following attributes:
 - title (optional): It defaults to "[ Asynchronous | Synchronous ] execution of %fun$s on %tgt$s with [no arguments | following arguments: %arg$s]"
-- client: local or local_async
-- tgt: shell-style globbing minion target
+- client: local, local_async or runner (runner_async is not supported)
+- tgt: shell-style globbing minion target for local and local_async client types
 - fun: function to run
-- arg (optional): arguments to pass to the function
+- arg / args (optional): arguments to pass to the function. It is called arg for local and local_async clients and args for runner client (Not sure why!)
 The only attribute that is not a direct map of [Salt API](http://docs.saltstack.com/en/latest/ref/clients/) is the title, which is optional.
 
 ## TODO
