@@ -20,9 +20,13 @@ import org.json.JSONObject;
 public class CommandModificationActivity extends AppCompatActivity {
 
     public static final String COMMAND_JSON = "command_json";
-    private int horizontal_padding, /*horizontal_padding_large,*/ vertical_padding, vertival_margin;
+    private int horizontal_padding, /*horizontal_padding_large,*/
+            vertical_padding, vertival_margin;
 
     private JSONObject mJSONCommand;
+    boolean runner;
+    boolean async;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,24 +52,36 @@ public class CommandModificationActivity extends AppCompatActivity {
             final Switch client = new Switch(this);
             client.setText(R.string.async);
             switch (mJSONCommand.getString("client")) {
+                case "runner":
+                    runner = true;
+                    async = false;
+                    break;
                 case "local":
-                    client.setChecked(false);
+                    runner = false;
+                    async = false;
                     break;
                 case "local_async":
-                    client.setChecked(true);
+                    runner = false;
+                    async = true;
                     break;
                 default:
-                    client.setEnabled(false);
+                    runner = true;
+                    async = false;
                     Popup.error(this, getString(R.string.should_never_happen), 701, null);
 //                    return;
             }
+            client.setChecked(async);
+            client.setEnabled(!runner);
+
             commandLayout.addView(client);
+
 
             final TextView tgtLabel = new TextView(this);
             tgtLabel.setText("Targeting");
             commandLayout.addView(tgtLabel, layoutParams);
             final EditText tgt = new EditText(this);
-            tgt.setText(mJSONCommand.getString("tgt"));
+            tgt.setText(runner ? getString(R.string.not_applicable) : mJSONCommand.getString("tgt"));
+            tgt.setEnabled(!runner);
             commandLayout.addView(tgt);
 
             final TextView funLabel = new TextView(this);
@@ -75,8 +91,8 @@ public class CommandModificationActivity extends AppCompatActivity {
             fun.setText(mJSONCommand.getString("fun"));
             commandLayout.addView(fun);
 
-            final JSONArray args = mJSONCommand.optJSONArray("arg");
-            final int argLen = (args == null)? 0 : args.length();
+            final JSONArray args = mJSONCommand.optJSONArray(runner ? "args" : "arg");
+            final int argLen = (args == null) ? 0 : args.length();
             final EditText[] argViews = new EditText[argLen];
             if (args != null) {
                 final TextView argLabel = new TextView(this);
@@ -107,13 +123,16 @@ public class CommandModificationActivity extends AppCompatActivity {
             setButton.setText(R.string.set_params);
             setButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    final StringBuilder commandString = new StringBuilder(
+                    final StringBuilder commandString = new StringBuilder(runner ?
+                            String.format("{\"client\":\"runner\",\"fun\":\"%s\"",
+                                    fun.getText()
+                            ) :
                             String.format("{\"client\":\"%s\",\"tgt\":\"%s\",\"fun\":\"%s\"",
                                     client.isChecked() ? "local_async" : "local", tgt.getText(), fun.getText()
                             ));
 
                     if (argLen > 0) {
-                        commandString.append(",\"arg\":[\"").append(argViews[0].getText()).append("\"");
+                        commandString.append(runner? ",\"args\":[\"" : ",\"arg\":[\"").append(argViews[0].getText()).append("\"");
                         for (int i = 1; i < argLen; i++) {
                             commandString.append(",\"").append(argViews[i].getText()).append("\"");
                         }
