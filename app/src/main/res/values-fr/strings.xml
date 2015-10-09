@@ -49,7 +49,8 @@
     <string name="logging_in">"Connexion à \"%1$s\" tant que %2$s"</string>
     <string name="modify">Modifier</string>
     <string name="no_client">"Aucun type de client trouvé!"</string>
-    <string name="no_fun_tgt">"Soit fun ou tgt pas trouvé!"</string>
+    <string name="no_fun">"fun pas trouvé!"</string>
+    <string name="no_tgt">"tgt pas trouvé!"</string>
     <string name="ok">OK</string>
     <string name="pref_default_value">"Pas encore configuré"</string>
     <string name="pref_default_url">http://pas.encore.configure</string>
@@ -60,4 +61,5 @@
     <string name="title_activity_command_modification">Modification de commande</string>
     <string name="wrong_client">Type de client "%1$s" est pas valid!</string>
     <string name="cancel">Annuler</string>
+    <string name="not_applicable">Non Applicable</string>
 </resources>

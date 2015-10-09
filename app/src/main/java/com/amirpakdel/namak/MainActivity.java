@@ -75,22 +75,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             return;
         }
-        if (NamakApplication.getSaltMaster().getAuthToken() == null) {
-            // It is too much to do all four!
-            // mDrawerListView.setEnabled(false) does nothing!
-            // We would need a callback from SaltMaster.login() to remove the header view
-            if (mHeader == null) {
-                mHeader = new TextView(this);
-                NamakApplication.getDashboardAdapter().setPadding(mHeader);
-                mHeader.setTextColor(Color.DKGRAY);
-                mHeader.setText(R.string.log_in);
-                mMainView.addHeaderView(mHeader);
-            }
-            mDrawerLayout.openDrawer(GravityCompat.START);
-            Popup.message(getString(R.string.log_in));
-        } else {  // There is at least one Salt Master and we are already authenticated
-            onLoginFinished();
-        }
+        updateSaltMasterStatus(true);
 
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
@@ -125,13 +110,13 @@ public class MainActivity extends AppCompatActivity
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
 //                setTitle(NamakApplication.getSaltMaster().getName());
-                updateSaltMasterStatus();
+                updateSaltMasterStatus(false);
             }
 
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 //                setTitle(R.string.app_name);
-                updateSaltMasterStatus();
+                updateSaltMasterStatus(false);
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -224,7 +209,7 @@ public class MainActivity extends AppCompatActivity
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    private void updateSaltMasterStatus() {
+    private void updateSaltMasterStatus(boolean forceOpenDrawer) {
         final SaltMaster sm = NamakApplication.getSaltMaster();
         if (sm.getAuthToken() == null) {
             // It is too much to do all four!
@@ -237,8 +222,10 @@ public class MainActivity extends AppCompatActivity
                 mHeader.setText(R.string.log_in);
                 mMainView.addHeaderView(mHeader);
             }
-            // Force opening the left drawer is too intrusive!
-            // mDrawerLayout.openDrawer(GravityCompat.START);
+            // Force opening the left drawer might be too intrusive!
+            if (forceOpenDrawer) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
             Popup.message(getString(R.string.log_in));
         } else {  // There is at least one Salt Master and we are already authenticated
             // mDrawerListView.setEnabled(false) does nothing!
@@ -252,6 +239,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoginFinished() {
-        updateSaltMasterStatus();
+        updateSaltMasterStatus(false);
     }
 }

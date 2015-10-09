@@ -132,6 +132,46 @@ public class NamakApplication extends android.app.Application {
 //        PreferenceManager.setDefaultValues(this, R.xml.pref, true);
 //        PreferenceManager.setDefaultValues(NamakApplication.context, R.xml.pref, false);
 
+        SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        edit.clear();
+
+        String password = "PASSWORD";
+        Set<String> saltmastersPrefSet = new HashSet<>();
+        saltmastersPrefSet.add("1");
+        edit.putString("saltmaster_1_name", "SandBox");
+        edit.putString("saltmaster_1_url", "http://10.0.205.201");
+        edit.putString("saltmaster_1_username", "amirp");
+        edit.putString("saltmaster_1_password", password);
+        edit.putString("saltmaster_1_eauth", "pam");
+        saltmastersPrefSet.add("2");
+        edit.putString("saltmaster_2_name", "UserQA");
+        edit.putString("saltmaster_2_url", "http://10.121.12.10");
+        edit.putString("saltmaster_2_username", "amirp");
+        edit.putString("saltmaster_2_password", password);
+        edit.putString("saltmaster_2_eauth", "pam");
+        saltmastersPrefSet.add("3");
+        edit.putString("saltmaster_3_name", "DR in Amazon");
+        edit.putString("saltmaster_3_url", "http://10.150.64.240");
+        edit.putString("saltmaster_3_username", "amirp");
+        edit.putString("saltmaster_3_password", password);
+        edit.putString("saltmaster_3_eauth", "pam");
+
+        edit.putStringSet("saltmasters", saltmastersPrefSet);
+
+        Set<String> dashboardsPrefSet = new HashSet<>();
+        dashboardsPrefSet.add("1");
+        edit.putString("dashboard_1_name", "Dashboard 01");
+        edit.putString("dashboard_1_url", "https://www.dropbox.com/s/q2gx3r8umhyg9m9/dashboard01.json?dl=1");
+        dashboardsPrefSet.add("2");
+        edit.putString("dashboard_2_name", "Sample 2");
+        edit.putString("dashboard_2_url", "http://namak.amirpakdel.com/dashboard-sample-2.json");
+
+        edit.putStringSet("dashboards", dashboardsPrefSet);
+
+//        edit.apply();
+        edit.commit();
+        // End Of Debug
+
         registerActivityLifecycleCallbacks(new MyActivityLifecycleCallbacks());
 
         context = getApplicationContext();
