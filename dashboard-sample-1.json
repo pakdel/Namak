@@ -1,53 +1,66 @@
 [
-    {
-        "title": "Get 3rd Fibonacci number",
-        "client": "local",
-        "tgt": "*m*",
-        "fun": "test.fib",
-        "arg": [
-            "3"
-        ]
-    },
-    {
-        "title": "Get 3rd Fibonacci number (async client)",
-        "client": "local_async",
-        "tgt": "*m*",
-        "fun": "test.fib",
-        "arg": [
-            "3"
-        ]
-    },
-    {
-        "title": "Ping Master (no client)",
-        "tgt": "master",
-        "fun": "test.ping"
-    },
-    {
-        "title": "Ping Master (wrong client)",
-        "client": "wrong",
-        "tgt": "master",
-        "fun": "test.ping"
-    },
-    {
-        "title": "Ping Master (async client)",
-        "client": "local_async",
-        "tgt": "master",
-        "fun": "test.ping"
-    },
-    {
-        "title": "Ping Master (no fun)",
-        "client": "local",
-        "tgt": "master"
-    },
-    {
-        "title": "Ping Master (no tgt)",
-        "client": "local",
-        "fun": "test.ping"
-    },
-    {
-        "title": "Ping Master",
-        "client": "local",
-        "tgt": "master",
-        "fun": "test.ping"
-    }
+  {
+    "title": "Get 3rd Fibonacci number",
+    "client": "local",
+    "tgt": "*m*",
+    "fun": "test.fib",
+    "arg": [
+      "3"
+    ]
+  },
+  {
+    "title": "Get 3rd Fibonacci number (async client)",
+    "client": "local_async",
+    "tgt": "*m*",
+    "fun": "test.fib",
+    "arg": [
+      "3"
+    ]
+  },
+  {
+    "title": "Ping Master (no client)",
+    "tgt": "master",
+    "fun": "test.ping"
+  },
+  {
+    "title": "Ping Master (wrong client)",
+    "client": "wrong",
+    "tgt": "master",
+    "fun": "test.ping"
+  },
+  {
+    "title": "Ping Master (async client)",
+    "client": "local_async",
+    "tgt": "master",
+    "fun": "test.ping"
+  },
+  {
+    "title": "Ping Master (no fun)",
+    "client": "local",
+    "tgt": "master"
+  },
+  {
+    "title": "Ping Master (no tgt)",
+    "client": "local",
+    "fun": "test.ping"
+  },
+  {
+    "title": "Ping Master",
+    "client": "local",
+    "tgt": "master",
+    "fun": "test.ping"
+  },
+  {
+    "title": "jobs.active Runner",
+    "client": "runner",
+    "fun": "jobs.active"
+  },
+  {
+    "title": "jobs.lookup_jid Runner",
+    "client": "runner",
+    "fun": "jobs.lookup_jid",
+    "args": [
+      "20151008154833658525"
+    ]
+  }
 ]
