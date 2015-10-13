@@ -1,8 +1,15 @@
 package com.amirpakdel.namak;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
 import org.json.JSONException;
@@ -73,7 +80,7 @@ public class SaltMaster {
                             Popup.message(NamakApplication.getAppContext().getString(R.string.logged_in, mName));
                             NamakApplication.triggerSaltMasterListeners();
                         } catch (JSONException error) {
-                            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.log_in_unexpected_response), 402, error);
+                            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.log_in_unexpected_response), 403, error);
                         }
                     }
                 },
@@ -81,7 +88,22 @@ public class SaltMaster {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         mAuthToken = null;
-                        Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.log_in_failed), 403, error);
+                        Context context = NamakApplication.getAppContext();
+                        if (error instanceof TimeoutError) {
+                            Popup.error(NamakApplication.getForegroundActivity(), context.getString(R.string.log_in_failed, context.getString(R.string.volley_timeout)), 411, error);
+                        } else if (error instanceof NoConnectionError) {
+                            Popup.error(NamakApplication.getForegroundActivity(), context.getString(R.string.log_in_failed, context.getString(R.string.volley_no_connection)), 412, error);
+                        } else if (error instanceof NetworkError) {
+                            Popup.error(NamakApplication.getForegroundActivity(), context.getString(R.string.log_in_failed, context.getString(R.string.volley_network_error)), 410, error);
+                        } else if (error instanceof ServerError) {
+                            Popup.error(NamakApplication.getForegroundActivity(), context.getString(R.string.log_in_failed, context.getString(R.string.volley_server_error)), 410, error);
+                        } else if (error instanceof AuthFailureError) {
+                            Popup.error(NamakApplication.getForegroundActivity(), context.getString(R.string.log_in_failed, context.getString(R.string.volley_auth_failure)), 410, error);
+                        } else if (error instanceof ParseError) {
+                            Popup.error(NamakApplication.getForegroundActivity(), context.getString(R.string.log_in_failed, context.getString(R.string.volley_parse_error)), 410, error);
+                        } else {
+                            Popup.error(NamakApplication.getForegroundActivity(), context.getString(R.string.log_in_failed, error.getMessage()), 410, error);
+                        }
                     }
                 });
         NamakApplication.addToVolleyRequestQueue(loginRequest);
@@ -91,7 +113,7 @@ public class SaltMaster {
         try {
             return new URL(new URL(mBaseUrl), path).toString();
         } catch (MalformedURLException error) {
-            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.should_never_happen), 404, error);
+            Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.should_never_happen), 402, error);
             return null;
         }
     }

@@ -43,7 +43,7 @@
     <string name="execute">"Exécuter"</string>
     <string name="job_failed">"Impossible d'exécuter la commande!"</string>
     <string name="job_unexpected_response">"Impossible de récupérer les résultats de l'exécution!"</string>
-    <string name="log_in_failed">"Échec de la connexion!"</string>
+    <string name="log_in_failed">"Échec de la connexion: %1$s"</string>
     <string name="log_in_unexpected_response">"Réponse inattendue lors de la connexion!"</string>
     <string name="logged_in">"Connecté sur \"%1$s\""</string>
     <string name="logging_in">"Connexion à \"%1$s\" tant que %2$s"</string>
@@ -62,4 +62,10 @@
     <string name="wrong_client">Type de client "%1$s" est pas valid!</string>
     <string name="cancel">Annuler</string>
     <string name="not_applicable">Non Applicable</string>
+    <string name="volley_timeout">Timed out</string>
+    <string name="volley_no_connection">"Connexion n'a pas pu être établie"</string>
+    <string name="volley_network_error">"Il y avait une erreur de réseau"</string> <!-- parent of NoConnectionError -->
+    <string name="volley_auth_failure">There was an authentication failure</string>
+    <string name="volley_server_error">"Il y avait un échec d'authentification"</string>
+    <string name="volley_parse_error">"Réponse du serveur n'a pas pu être analysé"</string>
 </resources>

@@ -8,8 +8,8 @@ android {
         applicationId "com.amirpakdel.namak"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 7
-        versionName "1.0 alpha 7"
+        versionCode 8
+        versionName "1.0 alpha 8"
     }
 
     buildTypes {

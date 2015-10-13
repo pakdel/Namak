@@ -25,7 +25,7 @@
     <string name="logging_in">Logging into "%1$s" as %2$s</string>
     <string name="logged_in">Successfully logged into "%1$s"</string>
     <string name="log_in_unexpected_response">Unexpected response during login!</string>
-    <string name="log_in_failed">Login failed!</string>
+    <string name="log_in_failed">Login failed: %1$s</string>
 
     <string name="wrong_client">Client type "%1$s" is not supported!</string>
     <string name="no_client">No client type found!</string>
@@ -60,4 +60,11 @@
     <string name="title_activity_dashboard_settings">Dashboard Settings</string>
     <string name="title_activity_command_execution">Command Execution</string>
     <string name="title_activity_command_modification">Command Modification</string>
+
+    <string name="volley_timeout">Timed out</string>
+    <string name="volley_no_connection">No connection could be established</string>
+    <string name="volley_network_error">There was a network error</string> <!-- parent of NoConnectionError -->
+    <string name="volley_auth_failure">There was an authentication failure</string>
+    <string name="volley_server_error">Get a Server Error response</string>
+    <string name="volley_parse_error">Response of the server could not be parsed</string>
 </resources>
