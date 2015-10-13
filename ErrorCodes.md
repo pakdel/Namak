@@ -17,9 +17,11 @@
 |  302 | This should never happen! In getChildView, we already know that "title" exists. |
 |  4xx | __Errors coming from SaltMaster__ |
 |  401 | This should never happen! In SaltMaster neither of "eauth", "username" and "password" keys is null, nor the value is non-finite number. |
-|  402 | Unexpected response during login! Verify the Salt Net API service to be up and responding properly to login requests. |
-|  403 | Login failed! Verify your credentials. |
-|  404 | This should never happen! We are generating relative URLs ourselves. |
+|  402 | This should never happen! We are generating relative URLs ourselves. |
+|  405 | Unexpected response during login! Verify the Salt Net API service to be up and responding properly to login requests. |
+|  410 | Login failed! Verify your SaltMaster address and credentials. |
+|  411 | Login timed out! Verify the SaltMaster address to be correct and the Salt API server to be up and running. |
+|  412 | Connection to SaltMaster failed! Verify the SaltMaster address and your network access. |
 |  5xx | __Errors coming from NamakSettingsActivity (GeneralSettingsActivity / DashboardSettingsActivity / SaltMasterSettingsActivity)__ |
 |  500 | Incomplete settings. At least one Salt Master and one Dashboard are required, with all of their fields set (even if the password is empty, it needs to be set).  |
 |  6xx | __Errors coming from CommandExecutionActivity__ |

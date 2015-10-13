@@ -125,15 +125,23 @@
             </tr>
             <tr>
               <td><a name="402">402</a></td>
+              <td>This should never happen! We are generating relative URLs ourselves.</td>
+            </tr>
+            <tr>
+              <td><a name="405">405</a></td>
               <td>Unexpected response during login! Verify the Salt Net API service to be up and responding properly to login requests.</td>
             </tr>
             <tr>
-              <td><a name="403">403</a></td>
-              <td>Login failed! Verify your credentials.</td>
+              <td><a name="410">41x</a></td>
+              <td>Login failed! Verify your SaltMaster address and credentials.</td>
             </tr>
             <tr>
-              <td><a name="404">404</a></td>
-              <td>This should never happen! We are generating relative URLs ourselves.</td>
+              <td><a name="411">411</a></td>
+              <td>Login timed out! Verify the SaltMaster address to be correct and the Salt API server to be up and running.</td>
+            </tr>
+            <tr>
+              <td><a name="412">412</a></td>
+              <td>Connection to SaltMaster failed! Verify the SaltMaster address and your network access.</td>
             </tr>
             <tr>
               <td>5xx</td>
