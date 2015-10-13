@@ -32,7 +32,7 @@ dependencies:
            touch $DEPS ;
          fi )'
 
-test:
+#test:
 #  pre:
 #    - ls /home/ubuntu/android
 #  post:
