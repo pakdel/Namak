@@ -163,8 +163,11 @@ public class NamakApplication extends android.app.Application {
         edit.putString("dashboard_1_name", "Dashboard 01");
         edit.putString("dashboard_1_url", "https://www.dropbox.com/s/q2gx3r8umhyg9m9/dashboard01.json?dl=1");
         dashboardsPrefSet.add("2");
-        edit.putString("dashboard_2_name", "Sample 2");
-        edit.putString("dashboard_2_url", "http://namak.amirpakdel.com/dashboard-sample-2.json");
+        edit.putString("dashboard_2_name", "Sample 1");
+        edit.putString("dashboard_2_url", "http://namak.amirpakdel.com/dashboard-sample-1.json");
+        dashboardsPrefSet.add("3");
+        edit.putString("dashboard_3_name", "Sample 2");
+        edit.putString("dashboard_3_url", "http://namak.amirpakdel.com/dashboard-sample-2.json");
 
         edit.putStringSet("dashboards", dashboardsPrefSet);
 
