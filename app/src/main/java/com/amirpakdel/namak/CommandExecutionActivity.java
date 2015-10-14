@@ -107,7 +107,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             mExecutionLogView.setText(fun, mJSONCommand.optJSONArray("args"));
         } else {
             try {
-                mExecutionLogView.setText(fun, mJSONCommand.getString("tgt"), mJSONCommand.optJSONArray("arg"));
+                mExecutionLogView.setText(fun, mJSONCommand.getString("tgt"), mJSONCommand.optString("expr_form", "glob"), mJSONCommand.optJSONArray("arg"));
             } catch (JSONException error) {
                 mExecutionLogView.setError(this, getString(R.string.no_tgt), 604, error);
                 assert mJSONCommand != null;
@@ -297,11 +297,11 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             commandText.setSpan(new ForegroundColorSpan(Color.BLACK), 13, 13 + fun.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             setText(commandText, TextView.BufferType.SPANNABLE);
         }
-        public void setText(/*Boolean async,*/ @NonNull String fun, @NonNull String tgt, @Nullable JSONArray arg) {
+        public void setText(/*Boolean async,*/ @NonNull String fun, @NonNull String tgt, @NonNull String matcher, @Nullable JSONArray arg) {
             assert async != null;
 
             commandMsg = async ? "Asynchronous" : "Synchronous";
-            commandMsg += " execution of " + fun + " on " + tgt;
+            commandMsg += " execution of " + fun + " on " + tgt + " (" + matcher + ")";
             if (arg == null) {
                 commandMsg += " with no arguments";
             } else {

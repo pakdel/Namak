@@ -7,15 +7,20 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class CommandModificationActivity extends AppCompatActivity {
 
@@ -84,6 +89,18 @@ public class CommandModificationActivity extends AppCompatActivity {
             tgt.setEnabled(!runner);
             commandLayout.addView(tgt);
 
+            final TextView matcherLabel = new TextView(this);
+            matcherLabel.setText("Matcher");
+            commandLayout.addView(matcherLabel, layoutParams);
+            List<String> matcherList = runner ? Arrays.asList(getString(R.string.not_applicable)) : Arrays.asList("glob", "pcre", "list", "grain", "grain_pcre", "pillar", "nodegroup", "range", "compound");
+            final Spinner matcher = new Spinner(this);
+            ArrayAdapter<String> matcherAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, matcherList);
+            matcherAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            matcher.setAdapter(matcherAdapter);
+            matcher.setSelection(runner ? 0 : matcherList.indexOf(mJSONCommand.optString("expr_form", "glob")));
+            matcher.setEnabled(!runner);
+            commandLayout.addView(matcher);
+
             final TextView funLabel = new TextView(this);
             funLabel.setText("Function");
             commandLayout.addView(funLabel, layoutParams);
@@ -127,8 +144,8 @@ public class CommandModificationActivity extends AppCompatActivity {
                             String.format("{\"client\":\"runner\",\"fun\":\"%s\"",
                                     fun.getText()
                             ) :
-                            String.format("{\"client\":\"%s\",\"tgt\":\"%s\",\"fun\":\"%s\"",
-                                    client.isChecked() ? "local_async" : "local", tgt.getText(), fun.getText()
+                            String.format("{\"client\":\"%s\",\"tgt\":\"%s\",\"expr_form\":\"%s\",\"fun\":\"%s\"",
+                                    client.isChecked() ? "local_async" : "local", tgt.getText(), matcher.getSelectedItem().toString(), fun.getText()
                             ));
 
                     if (argLen > 0) {
