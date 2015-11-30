@@ -4,6 +4,10 @@ android {
     compileSdkVersion 22
     buildToolsVersion "23.0.1"
 
+    adbOptions {
+        timeOutInMs 300000 // set timeout to 1 minute (because of slow Circle CI)
+    }
+
     defaultConfig {
         applicationId "com.amirpakdel.namak"
         minSdkVersion 19
