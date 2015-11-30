@@ -64,14 +64,14 @@ public class NamakApplication extends android.app.Application {
 
     public static Activity getForegroundActivity() { return foregroundActivity; }
     private static final class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
-        public void onActivityCreated(Activity activity, Bundle bundle) {
-            foregroundActivity = activity;
-        }
+        public void onActivityCreated(Activity activity, Bundle bundle) { /* No op */ }
 
         @Override
         public void onActivityStarted(Activity activity) { /* No op */ }
         @Override
-        public void onActivityResumed(Activity activity) { /* No op */ }
+        public void onActivityResumed(Activity activity) {
+            foregroundActivity = activity;
+        }
         @Override
         public void onActivityPaused(Activity activity) { /* No op */ }
         @Override
