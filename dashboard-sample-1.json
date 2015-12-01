@@ -51,6 +51,13 @@
     "fun": "test.ping"
   },
   {
+    "title": "Compound Target Matching",
+    "client": "local",
+    "tgt": "* and ! G@os:Windows",
+    "expr_form": "compound",
+    "fun": "test.ping"
+  },
+  {
     "title": "jobs.active Runner",
     "client": "runner",
     "fun": "jobs.active"

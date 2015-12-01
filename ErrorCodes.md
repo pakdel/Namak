@@ -32,6 +32,7 @@
 |  604 |  tgt not found! Target (tgt) field of dashboard item is required. |
 |  610 |  This should never happen! onActivityResult should never receive any requestCode other than COMMAND_ADJUST_REQUEST. |
 |  611 |  This should never happen! CommandModificationActivity always returns a valid JSON. |
+|  612 |  This should never happen! savedInstanceState.getString("returned_data") always returns a valid JSON. |
 |  620 | Failed to run the command! Please verify the command and the Salt Net API service to be up and running. |
 |  621 | Unexpected response during command execution! Either Synchronous execution did not return a "return" array, or Asynchronous execution did not return a "jid". |
 |  622 | Failed to check for execution results! Please verify the JID and the Salt Net API service to be up and running. |
