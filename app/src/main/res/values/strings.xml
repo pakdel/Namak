@@ -21,6 +21,8 @@
     <string name="should_never_happen">This should never happen!</string>
 
     <string name="not_logged_in">Not logged in</string>
+    <string name="session_expired">Session expired %1$tF %1$tT %1$tZ</string>
+    <string name="session_expires">Session expires %1$tF %1$tT %1$tZ</string>
     <string name="log_in">Choose a Salt Master to login</string>
     <string name="logging_in">Logging into "%1$s" as %2$s</string>
     <string name="logged_in">Successfully logged into "%1$s"</string>

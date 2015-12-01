@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,6 +23,7 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.HashSet;
 
 
@@ -32,6 +35,15 @@ public class MainActivity extends AppCompatActivity
     private ListView mDrawerListView;
     private ExpandableListView mMainView;
     private TextView mHeader;
+    private Snackbar mRelogin;
+    private Handler mExpirationHandler = new Handler();
+    private Runnable mExpirationRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateSaltMasterStatus(false);
+        }
+    };
+
 
     private void setSaltMasterNames() {
         mDrawerListView.setAdapter(new ArrayAdapter<>(
@@ -85,6 +97,7 @@ public class MainActivity extends AppCompatActivity
     public void onPause() {
         super.onPause();
 //        NamakApplication.getPref().unregisterOnSharedPreferenceChangeListener(prefChanged);
+        mExpirationHandler.removeCallbacks(mExpirationRunnable);
     }
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -143,8 +156,13 @@ public class MainActivity extends AppCompatActivity
         mMainView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                if (NamakApplication.getSaltMaster().getAuthToken() == null) {
+                final SaltMaster sm = NamakApplication.getSaltMaster();
+                if (sm.getAuthToken() == null) {
                     Popup.error(mainActivity, getString(R.string.not_logged_in), 201, null);
+                    return false;
+                }
+                if (sm.getExpiration() > System.currentTimeMillis()) {
+                    Popup.error(mainActivity, getString(R.string.session_expired, new Date(sm.getExpiration())), 202, null);
                     return false;
                 }
                 Intent intent = new Intent(mainActivity, CommandExecutionActivity.class);
@@ -210,8 +228,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateSaltMasterStatus(boolean forceOpenDrawer) {
+        mExpirationHandler.removeCallbacks(mExpirationRunnable);
         final SaltMaster sm = NamakApplication.getSaltMaster();
-        if (sm.getAuthToken() == null) {
+//        final String AuthToken = sm.getAuthToken();
+        final long Expiration = sm.getExpiration();
+
+        if (Expiration > System.currentTimeMillis()) {  // sm.getAuthToken() != null
+            // mDrawerListView.setEnabled(true) does nothing!
+            setTitle(NamakApplication.getSaltMaster().getName());
+            if (mHeader != null) {
+                mMainView.removeHeaderView(mHeader);
+            }
+            // mDrawerLayout.closeDrawers();
+            if (mRelogin != null) {
+                mRelogin.dismiss();
+                mRelogin = null;
+            }
+            mExpirationHandler.postDelayed(mExpirationRunnable, Expiration - System.currentTimeMillis());
+            return;
+        }
+
+        if (Expiration == 0) {  // sm.getAuthToken() == null
             // It is too much to do all four!
             // mDrawerListView.setEnabled(false) does nothing!
             setTitle(R.string.app_name);
@@ -226,15 +263,27 @@ public class MainActivity extends AppCompatActivity
             if (forceOpenDrawer) {
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
-            Popup.message(getString(R.string.log_in));
-        } else {  // There is at least one Salt Master and we are already authenticated
-            // mDrawerListView.setEnabled(false) does nothing!
-            setTitle(NamakApplication.getSaltMaster().getName());
-            if (mHeader != null) {
-                mMainView.removeHeaderView(mHeader);
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                Popup.message(getString(R.string.log_in));
             }
-            // mDrawerLayout.closeDrawers();
+            return;
         }
+
+        // Expiration < System.currentTimeMillis() => AuthToken is not null, but it is expired
+        // mDrawerListView.setEnabled(false) does nothing!
+        //noinspection ResourceType
+        if (mRelogin == null) {
+            mRelogin = Snackbar.make(mMainView, getString(R.string.session_expired, new Date(sm.getExpiration())), Snackbar.LENGTH_INDEFINITE)
+                    .setAction("ReLogin", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    sm.login();
+                                }
+                            }
+                    );
+        }
+        mRelogin.setActionTextColor(Color.GRAY).show();
+//        return;
     }
 
     @Override

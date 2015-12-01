@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 public class SaltMaster {
     private int mTimeout;
@@ -27,6 +28,7 @@ public class SaltMaster {
     private String mPassword;
     private String mEauth;
     private String mAuthToken;
+    private long mExpiration;
 
     public SaltMaster(int timeout) {
         this.mTimeout = timeout;
@@ -38,6 +40,7 @@ public class SaltMaster {
         this.mPassword = null;
         this.mEauth = null;
         this.mAuthToken = null;
+        this.mExpiration = 0;
     }
 
     public void setId(String id) {
@@ -60,6 +63,7 @@ public class SaltMaster {
         this.mEauth = pref.getString("saltmaster_" + mId + "_eauth", null);
 
         this.mAuthToken = null;
+        this.mExpiration = 0;
 
         Popup.message(NamakApplication.getAppContext().getString(R.string.logging_in, mName, mUsername));
         JSONObject loginPayload = new JSONObject();
@@ -78,6 +82,8 @@ public class SaltMaster {
                         try {
                             mAuthToken = response.getJSONArray("return").getJSONObject(0).getString("token");
                             Popup.message(NamakApplication.getAppContext().getString(R.string.logged_in, mName));
+                            mExpiration = (long) (response.getJSONArray("return").getJSONObject(0).getDouble("expire") * 1000);
+                            Popup.message(NamakApplication.getAppContext().getString(R.string.session_expires, new Date(mExpiration)));
                             NamakApplication.triggerSaltMasterListeners();
                         } catch (JSONException error) {
                             Popup.error(NamakApplication.getForegroundActivity(), NamakApplication.getAppContext().getString(R.string.log_in_unexpected_response), 403, error);
@@ -142,9 +148,11 @@ public class SaltMaster {
         return mName;
     }
 
-
     public String getBaseUrl() {
         return mBaseUrl;
+    }
+    public long getExpiration() {
+        return mExpiration;
     }
 
 //    public void setBaseUrl(String baseUrl) {

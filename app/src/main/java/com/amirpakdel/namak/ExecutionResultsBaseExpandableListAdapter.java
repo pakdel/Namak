@@ -42,6 +42,22 @@ class ExecutionResultsBaseExpandableListAdapter extends BaseExpandableListAdapte
         notifyDataSetChanged();
     }
 
+    public String getData() {
+        if (mMinionNames == null) {
+            return null;
+        }
+        JSONObject data = new JSONObject();
+        for (int i = 0; i < mMinionNames.size(); i++) {
+            try {
+                data.put(mMinionNames.get(i), mReturedResult.get(i));
+            } catch (JSONException e) {
+                // If the value is non-finite number or if the key is null.
+                e.printStackTrace();
+            }
+        }
+        return data.toString();
+    }
+
     @Override
     public int getGroupCount() {
         return mMinionNames == null ? 0 : mMinionNames.size();

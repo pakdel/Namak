@@ -101,7 +101,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             assert mJSONCommand != null;
             assert async != null;
             mJSONCommand = null;
-             return;
+            return;
         }
         if (runner) {
             mExecutionLogView.setText(fun, mJSONCommand.optJSONArray("args"));
@@ -148,6 +148,28 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             return;
         }
 
+        if (savedInstanceState != null) {
+            mJID = savedInstanceState.getString("mJID");
+            final String returned_data_string = savedInstanceState.getString("returned_data_string");
+            if (returned_data_string != null) {
+                try {
+                    mExecutionResultsListAdapter.setData(new JSONObject(returned_data_string));
+                } catch (JSONException error) {
+                    Popup.error(this, getString(R.string.should_never_happen), 612, error);
+                }
+                mExecutionLogView.finished();
+                return;
+            }
+            if (mJID != null) {
+                assert async == true;
+                mExecutionLogView.gotJID();
+                mSwipeRefreshLayout.setEnabled(true);
+                Popup.message(getString(R.string.pull_for_results));
+                return;
+            }
+        }
+
+        // savedInstanceState == null or ( returned_data_string == null and mJID == null )
         if (NamakApplication.getAutoExecute()) {
             execute();
         } else {
@@ -185,6 +207,14 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             mExecutionResultsView.addHeaderView(headerButtons);
         }
     }
+
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        outState.putString("mJID", mJID);
+        outState.putString("returned_data_string", mExecutionResultsListAdapter.getData());
+    }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == COMMAND_ADJUST_REQUEST) {
