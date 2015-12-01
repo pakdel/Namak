@@ -23,16 +23,6 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 
 ## TODO
 - Translate commandMsg in CommandExecutionActivity
-- TextView.setHint
-- Support clients other than local (Start by runner)
-    - Salt Runner
-```
-{
-    "client": "runner",
-    "fun": "jobs.lookup_jid",
-    "jid": "20130603122505459265"
-}
-```
 - Dashboards
     - can have their own Timeout
     - can be absolute or relative
@@ -41,7 +31,6 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 - Make sure Volley does not cache execution URLs
 - Execution Activity:
     - re-run option
-
 - onDestroy: log out
 - onTrimMemory: clean up dashboards and stuff ....
 - onPause: memorize current SaltMaster and authToken
