@@ -12,6 +12,7 @@
 |  2xx | __Errors coming from MainActivity__ |
 |  200 | Incomplete settings. You will need at least one Salt Master and one Dashboard set up. Open settings page from the menu (or the wrench icon in the title bar). |
 |  201 | Not logged in. Open the left drawer and choose a SaltMaster to log into. |
+|  202 | Session Expired. Either relogin using the button on the bottom or open the left drawer and choose a SaltMaster to log into. |
 |  3xx | __Errors coming from DashboardAdapter__ |
 |  301 | This should never happen! In getChild, we always get an item that exists. |
 |  302 | This should never happen! In getChildView, we already know that "title" exists. |
