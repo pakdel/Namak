@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity
                     Popup.error(mainActivity, getString(R.string.not_logged_in), 201, null);
                     return false;
                 }
-                if (sm.getExpiration() > System.currentTimeMillis()) {
+                if (sm.getExpiration() < System.currentTimeMillis()) {
                     Popup.error(mainActivity, getString(R.string.session_expired, new Date(sm.getExpiration())), 202, null);
                     return false;
                 }
