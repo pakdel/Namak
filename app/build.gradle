@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "25.0.1"
 
     adbOptions {
         timeOutInMs 300000 // set timeout to 1 minute (because of slow Circle CI)
@@ -11,8 +11,8 @@ android {
     defaultConfig {
         applicationId "com.amirpakdel.namak"
         minSdkVersion 19
-        targetSdkVersion 22
-        versionCode 9
+        targetSdkVersion 25
+        versionCode 12
         versionName "1.0 Beta 2"
     }
 
@@ -32,10 +32,10 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.+'
-    compile 'com.android.support:support-v4:22.*'
+    compile 'com.android.support:appcompat-v7:23.+'
+    compile 'com.android.support:support-v4:23.*'
     // Snackbar
-    compile 'com.android.support:design:22.+'
+    compile 'com.android.support:design:23.+'
     // Volley
     compile 'com.mcxiaoke.volley:library:1.0.19'
 }
