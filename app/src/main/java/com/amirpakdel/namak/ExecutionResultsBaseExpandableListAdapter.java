@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -25,6 +26,14 @@ class ExecutionResultsBaseExpandableListAdapter extends BaseExpandableListAdapte
     }
 
     public void setData(JSONObject dataStructure) {
+        if (dataStructure.length() == 0) {
+            mMinionNames = new ArrayList<>(1);
+            mReturedResult = new ArrayList<>(1);
+            mMinionNames.add(NamakApplication.getAppContext().getString(R.string.no_result));
+            mReturedResult.add(NamakApplication.getAppContext().getString(R.string.empty_response));
+            notifyDataSetChanged();
+            return;
+        }
         mMinionNames = new ArrayList<>(dataStructure.length());
         mReturedResult = new ArrayList<>(dataStructure.length());
 
@@ -118,6 +127,9 @@ class ExecutionResultsBaseExpandableListAdapter extends BaseExpandableListAdapte
             ((TextView) convertView).setTypeface(null, Typeface.BOLD);
         }
         ((TextView) convertView).setText(mMinionNames.get(groupPosition));
+        if (getGroupCount() == 1) {
+            ((ExpandableListView) parent).expandGroup(0);
+        }
         return convertView;
     }
 

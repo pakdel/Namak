@@ -5,7 +5,7 @@
 
 
 
-    <string name="helpPageURL" translatable="false">"http://namak.amirpakdel.com/errors.html#%03d"</string>
+    <string name="helpPageURL" translatable="false">"http://namak.pakdel.ca/errors.html#%03d"</string>
     <string name="details">Details</string>
 
     <string name="dashboard_load_succeeded">Loaded "%1$s" dashboard</string>
@@ -38,6 +38,9 @@
     <string name="exec_unexpected_response">Unexpected response during command execution!</string>
     <string name="job_failed">Failed to run the command!</string>
     <string name="job_unexpected_response">Failed to check for execution results!</string>
+
+    <string name="no_result">No result</string>
+    <string name="empty_response">Received an empty response</string>
 
     <string name="title_minions" translatable="false">Minions</string>
     <string name="title_cloud" translatable="false">Cloud</string>

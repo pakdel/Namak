@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -80,7 +81,7 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
+    public View getGroupView(int i, boolean b, View view, ViewGroup parent) {
         if (view == null) {
             view = new TextView(context);
             view.setPadding(horizontal_padding_large, vertical_padding, horizontal_padding, vertical_padding);
@@ -90,11 +91,14 @@ public class DashboardAdapter extends BaseExpandableListAdapter {
             view.setBackgroundColor(background_color);
         }
         ((TextView) view).setText(NamakApplication.getDashboardName(i));
+        if (getGroupCount() == 1) {
+            ((ExpandableListView) parent).expandGroup(0);
+        }
         return view;
     }
 
     @Override
-    public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
+    public View getChildView(int i, int i1, boolean b, View view, ViewGroup parent) {
         if (view == null) {
             view = new TextView(context);
             view.setPadding(horizontal_padding, vertical_padding, horizontal_padding, vertical_padding);
