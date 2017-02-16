@@ -23,6 +23,9 @@ The only attribute that is not a direct map of [Salt API](http://docs.saltstack.
 
 ## TODO
 - Translate commandMsg in CommandExecutionActivity
+- Sort Salt Masters by name
+- Support modification of kwargs
+- In CommandModificationActivity: Make a field readonly if cannot edit!
 - Dashboards
     - can have their own Timeout
     - can be absolute or relative
