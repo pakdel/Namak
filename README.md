@@ -22,9 +22,10 @@ Dashboards are JSON arrays of JSON objects with following attributes:
 The only attribute that is not a direct map of [Salt API](http://docs.saltstack.com/en/latest/ref/clients/) is the title, which is optional.
 
 ## TODO
-- Translate commandMsg in CommandExecutionActivity
+- Keep last JID of every dashboard item
 - Sort Salt Masters by name
 - Support modification of kwargs
+- Filter command outputs
 - In CommandModificationActivity: Make a field readonly if cannot edit!
 - Dashboards
     - can have their own Timeout

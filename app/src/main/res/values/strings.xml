@@ -39,6 +39,13 @@
     <string name="job_failed">Failed to run the command!</string>
     <string name="job_unexpected_response">Failed to check for execution results!</string>
 
+    <string name="logview_runner">Execution of %1$s runner</string>
+    <string name="logview_async">Asynchronous execution of %1$s on %2$s (%3$s) </string>
+    <string name="logview_sync">Synchronous execution of %1$s on %2$s (%3$s) </string>
+    <string name="logview_no_args">" with no arguments"</string>
+    <string name="logview_args">" with following positional arguments: "</string>
+    <string name="logview_kwargs">" with following keyword arguments: "</string>
+
     <string name="no_result">No result</string>
     <string name="empty_response">Received an empty response</string>
 

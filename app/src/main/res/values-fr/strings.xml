@@ -46,6 +46,13 @@
     <string name="job_failed">"Impossible d'exécuter la commande!"</string>
     <string name="job_unexpected_response">"Impossible de récupérer les résultats de l'exécution!"</string>
 
+    <string name="logview_runner">Execution de runner %1$s </string>
+    <string name="logview_async">Exécution asynchrone de %1$s sur %2$s (%3$s) </string>
+    <string name="logview_sync">Exécution synchrone de %1$s sur %2$s (%3$s) </string>
+    <string name="logview_no_args">" sans arguments"</string>
+    <string name="logview_args">" avec les arguments positionnels suivants: "</string>
+    <string name="logview_kwargs">" avec les arguments (keyword) suivants: "</string>
+
     <string name="no_result">Aucun résultat</string>
     <string name="empty_response">Réponse reçue et vide</string>
 

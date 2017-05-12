@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -31,6 +32,11 @@ import org.json.JSONObject;
 public class CommandExecutionActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     public static final String COMMAND_GROUP_POSITION = "command_group_position";
     public static final String COMMAND_CHILD_POSITION = "command_child_position";
+
+
+    private static final String SAVED_STATE_JID = "mJID";
+    private static final String SAVED_STATE_DATA = "returned_data_string";
+
     static final int COMMAND_ADJUST_REQUEST = 0;
     private JSONObject mJSONCommand;
     private Boolean runner;
@@ -45,7 +51,6 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mExecutionLogView = new LogView(this);
@@ -53,13 +58,13 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             mJSONCommand = NamakApplication.getDashboardItem(
                     getIntent().getExtras().getInt(COMMAND_GROUP_POSITION),
                     getIntent().getExtras().getInt(COMMAND_CHILD_POSITION));
-            prepareCommand();
         } catch (JSONException error) {
             Popup.error(this, getString(R.string.should_never_happen), 600, error);
             assert mJSONCommand == null;
             assert async == null;
             return;
         }
+        prepareCommand();
         setupViews();
     }
 
@@ -122,6 +127,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         Resources r = getResources();
 
         mExecutionResultsView = new ExpandableListView(this);
+        //noinspection ResourceType
         ViewGroup.MarginLayoutParams executionResultsMargins = new ViewGroup.MarginLayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         executionResultsMargins.setMargins((int) r.getDimension(R.dimen.activity_horizontal_margin), (int) r.getDimension(R.dimen.activity_vertical_margin), (int) r.getDimension(R.dimen.activity_horizontal_margin), (int) r.getDimension(R.dimen.activity_vertical_margin));
         mExecutionResultsView.setLayoutParams(executionResultsMargins);
@@ -148,9 +154,10 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             return;
         }
 
+        // Already been to this Activity
         if (savedInstanceState != null) {
-            mJID = savedInstanceState.getString("mJID");
-            final String returned_data_string = savedInstanceState.getString("returned_data_string");
+            mJID = savedInstanceState.getString(SAVED_STATE_JID);
+            final String returned_data_string = savedInstanceState.getString(SAVED_STATE_DATA);
             if (returned_data_string != null) {
                 try {
                     mExecutionResultsListAdapter.setData(new JSONObject(returned_data_string));
@@ -172,7 +179,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         // savedInstanceState == null or ( returned_data_string == null and mJID == null )
         if (NamakApplication.getAutoExecute()) {
             execute();
-        } else {
+        } else {  // TODO re-execute goes here
             final LinearLayout headerButtons = new LinearLayout(this);
 
 //            final Resources r = getResources();
@@ -211,26 +218,25 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
 
     @Override
     protected void onSaveInstanceState (Bundle outState) {
-        outState.putString("mJID", mJID);
-        outState.putString("returned_data_string", mExecutionResultsListAdapter.getData());
+        outState.putString(SAVED_STATE_JID, mJID);
+        outState.putString(SAVED_STATE_DATA, mExecutionResultsListAdapter.getData());
     }
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == COMMAND_ADJUST_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                try {
-                    mJSONCommand = new JSONObject(data.getExtras().getString(CommandModificationActivity.COMMAND_JSON));
-                    prepareCommand();
-                } catch (JSONException error) {
-                    Popup.error(this, getString(R.string.should_never_happen), 611, error);
-                }
-//            } else {
-//                Popup.message(String.format("Nothing has changed: %d / %d", requestCode, resultCode));
-            }
+        assert requestCode == COMMAND_ADJUST_REQUEST;
+        if (resultCode != RESULT_OK) {
+            // Popup.message(String.format("Nothing has changed: %d / %d", requestCode, resultCode));
             return;
         }
-        Popup.error(this, getString(R.string.should_never_happen), 610, null);
+        try {
+            mJSONCommand = new JSONObject(data.getExtras().getString(CommandModificationActivity.COMMAND_JSON));
+            prepareCommand();
+        } catch (JSONException error) {
+            Popup.error(this, getString(R.string.should_never_happen), 611, error);
+        }
+        // Deprecated
+        // Popup.error(this, getString(R.string.should_never_happen), 610, null);
     }
 
     private void execute() {
@@ -245,6 +251,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
                                 mSwipeRefreshLayout.setEnabled(true);
                                 Popup.message(getString(R.string.pull_for_results));
                             } else {
+                                assert !mSwipeRefreshLayout.isEnabled();
                                 mExecutionResultsListAdapter.setData(response.getJSONArray("return").getJSONObject(0));
                                 mExecutionLogView.finished();
                             }
@@ -294,12 +301,14 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         NamakApplication.addToVolleyRequestQueue(jidRequest);
     }
 
-    private class LogView extends TextView {
+    private class LogView extends AppCompatTextView {
         private String commandMsg;
         private Spannable commandText;
+        private final Context context;
 
         public LogView(Context context) {
             super(context);
+            this.context = context;
         }
 
         // This is only used for error messages
@@ -313,37 +322,38 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
             // requestFocus();
         }
 
-        public void setText(/*Boolean async,*/ @NonNull String fun, @Nullable JSONArray args) {
+        public void setText(@NonNull String fun, @Nullable JSONArray args) {
+            assert runner;
+            assert !async;
             assert async != null;
 
-            commandMsg = "Execution of " + fun + " runner";
+            commandMsg = context.getString(R.string.logview_runner, fun);
             if (args == null) {
-                commandMsg += " with no arguments";
+                commandMsg += context.getString(R.string.logview_no_args);
             } else {
-                commandMsg += " with following arguments: " + args.toString();
+                commandMsg += context.getString(R.string.logview_args) + args.toString();
             }
 
             commandText = new SpannableString(commandMsg);
-            commandText.setSpan(new ForegroundColorSpan(Color.BLACK), 13, 13 + fun.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            final int offset = commandMsg.indexOf(fun);
+            commandText.setSpan(new ForegroundColorSpan(Color.BLACK), offset, offset + fun.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             setText(commandText, TextView.BufferType.SPANNABLE);
         }
-        public void setText(/*Boolean async,*/ @NonNull String fun, @NonNull String tgt, @NonNull String matcher, @Nullable JSONArray arg) {
+        public void setText(/*Boolean async,*/ @NonNull String fun, @NonNull String tgt, @NonNull String matcher, @Nullable JSONArray args) {
+            assert !runner;
             assert async != null;
 
-            commandMsg = async ? "Asynchronous" : "Synchronous";
-            commandMsg += " execution of " + fun + " on " + tgt + " (" + matcher + ")";
-            if (arg == null) {
-                commandMsg += " with no arguments";
+            commandMsg = context.getString(async ? R.string.logview_async : R.string.logview_sync, fun, tgt, matcher) ;
+            if (args == null) {
+                commandMsg += context.getString(R.string.logview_no_args);
             } else {
-                commandMsg += " with following arguments: " + arg.toString();
+                commandMsg += context.getString(R.string.logview_args) + args.toString();
             }
 
             commandText = new SpannableString(commandMsg);
-            int offset = async ? 12 : 11;
-            commandText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, async ? 12 : 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            offset += 14;
+            int offset = commandMsg.indexOf(fun);
             commandText.setSpan(new ForegroundColorSpan(Color.BLACK), offset, offset + fun.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            offset += fun.length() + 4;
+            offset = commandMsg.indexOf(tgt, offset);
             commandText.setSpan(new ForegroundColorSpan(Color.BLACK), offset, offset + tgt.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             setText(commandText, TextView.BufferType.SPANNABLE);
         }
@@ -357,6 +367,7 @@ public class CommandExecutionActivity extends AppCompatActivity implements Swipe
         }
 
         public void finished() {
+            assert !mSwipeRefreshLayout.isEnabled();
             setText(commandText, TextView.BufferType.SPANNABLE);
         }
     }
