@@ -1,0 +1,95 @@
+[
+  {
+    "title": "Roles and IPs",
+    "client": "local",
+    "tgt": "*",
+    "fun": "grains.item",
+    "arg": [
+      "roles",
+      "ipv4"
+    ]
+  },
+  {
+    "title": "Versions of all application",
+    "client": "local",
+    "tgt": "master",
+    "fun": "pillar.get",
+    "arg": [
+      "version"
+    ]
+  },
+  {
+    "title": "Version of CX-API",
+    "client": "local",
+    "tgt": "master",
+    "fun": "pillar.get",
+    "arg": [
+      "version:cx-api"
+    ]
+  },
+  {
+    "title": "Info of CX-API",
+    "client": "local",
+    "tgt": "roles:cx-api",
+    "expr_form": "grain",
+    "fun": "cmd.run",
+    "arg": [
+      "curl -s http://{{ grains['ipv4'][0] }}:9000/api/ops/info | python -mjson.tool",
+      "template=jinja"
+    ]
+  },
+  {
+    "title": "Test Status of userqa-cx01 instance",
+    "client": "runner",
+    "fun_": "test.arg",
+    "fun": "cloud.action",
+    "kwargs": {
+      "instance": "iad05dns01a"
+    },
+    "args": [
+      "show_instance"
+    ]
+  },
+  {
+    "title": "Status of userqa-cx01 instance",
+    "client": "runner",
+    "fun": "cloud.action",
+    "args": [
+      "show_instance",
+      "",
+      ["userqa-cx01", "iad05dns01a"]
+    ]
+  },
+  {
+      "title": "Start userqa-cx01 instance",
+      "client": "runner",
+      "fun": "cloud.action",
+      "args": [
+        "start",
+        "",
+        "",
+        "",
+        "userqa-cx01"
+      ]
+  },
+  {
+    "title": "Enable CX-API Server in NetScaler",
+    "client": "local",
+    "tgt": "roles:netscaler-controller",
+    "expr_form": "grain",
+    "fun": "netscaler.server_enable",
+    "arg": [
+      "iad04cxapi01a"
+    ]
+  },
+  {
+    "title": "Instance Status",
+    "client": "runner",
+    "fun": "manage.status"
+  },
+  {
+    "title": "Currently Running Salt Jobs",
+    "client": "runner",
+    "fun": "jobs.active"
+  }
+]

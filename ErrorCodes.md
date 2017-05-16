@@ -31,7 +31,7 @@
 |  602 |  Client type not supported! Only supported client tyes are local and local_async. |
 |  603 |  fun not found! Function (fun) field of dashboard item is required. |
 |  604 |  tgt not found! Target (tgt) field of dashboard item is required. |
-|  610 |  This should never happen! onActivityResult should never receive any requestCode other than COMMAND_ADJUST_REQUEST. |
+|  610 |  Deprecated: This should never happen! onActivityResult should never receive any requestCode other than COMMAND_ADJUST_REQUEST. |
 |  611 |  This should never happen! CommandModificationActivity always returns a valid JSON. |
 |  612 |  This should never happen! savedInstanceState.getString("returned_data") always returns a valid JSON. |
 |  620 | Failed to run the command! Please verify the command and the Salt Net API service to be up and running. |
