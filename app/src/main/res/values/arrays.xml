@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="auth_backends">
+        <item>auto</item>
+        <item>ldap</item>
+        <item>pam</item>
+    </string-array>
+</resources>

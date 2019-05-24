@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/dashboardScreen">
+
+    <fragment
+        android:id="@+id/dashboardScreen"
+        android:name="ca.pakdel.namak.DashboardsFragment"
+        android:label="@string/dashboards"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_execution"
+            app:destination="@id/executionScreen" />
+
+        <action android:id="@+id/action_dashboard_to_settings"
+            app:destination="@id/settingsMainFragment"/>
+
+        <action
+            android:id="@+id/action_dashboard_to_about"
+            app:destination="@id/aboutScreen" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/executionScreen"
+        android:name="ca.pakdel.namak.ExecutionFragment"
+        android:label="@string/execution"
+        tools:layout="@layout/fragment_execution">
+        <argument
+            android:name="functionName"
+            app:argType="string" />
+        <deepLink
+            android:id="@+id/deepLink"
+            android:autoVerify="true"
+            app:uri="namak.pakdel.ca/command/{functionName}" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsMainFragment"
+        android:name="ca.pakdel.namak.settings.MainFragment">
+        <action
+            android:id="@+id/action_main_settings_to_salt_master"
+            app:destination="@id/settingsSaltMasterFragment" />
+    </fragment>
+    <!-- Global action -->
+<!--
+    <action android:id="@+id/open_settings_main_fragment"
+        app:destination="@id/settingsMainFragment"/>
+-->
+
+
+    <fragment
+        android:id="@+id/settingsSaltMasterFragment"
+        android:name="ca.pakdel.namak.settings.SaltMasterFragment"
+        android:label="@string/salt_master_settings">
+        <argument
+            android:name="saltMasterId"
+            app:argType="string" />
+        <deepLink
+            android:id="@+id/deepLink"
+            android:autoVerify="true"
+            app:uri="namak.pakdel.ca/saltmaster/{saltMasterId}" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/aboutScreen"
+        android:name="ca.pakdel.namak.About"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about">
+        <deepLink
+            android:id="@+id/deepLink"
+            android:autoVerify="true"
+            app:uri="namak.pakdel.ca/about" />
+    </fragment>
+</navigation>

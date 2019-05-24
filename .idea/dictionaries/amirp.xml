@@ -1,8 +1,15 @@
 <component name="ProjectDictionaryState">
   <dictionary name="amirp">
     <words>
-      <w>kwargs</w>
-      <w>logview</w>
+      <w>backends</w>
+      <w>dataset</w>
+      <w>eauth</w>
+      <w>ipcidr</w>
+      <w>kwarg</w>
+      <w>namak</w>
+      <w>pakdel</w>
+      <w>pcre</w>
+      <w>recyclerview</w>
       <w>saltmaster</w>
       <w>saltmasters</w>
     </words>

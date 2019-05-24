@@ -1,82 +1,20 @@
 <resources>
-    <string name="app_name" translatable="false">Namak</string>
-    <string name="drawer_open">Drawer Open</string>
-    <string name="drawer_close">Drawer Close</string>
-
-
-
-    <string name="helpPageURL" translatable="false">"http://namak.pakdel.ca/errors.html#%03d"</string>
-    <string name="details">Details</string>
-
-    <string name="dashboard_load_succeeded">Loaded "%1$s" dashboard</string>
-    <string name="dashboard_load_failed_get">Unexpected response when getting "%1$s" dashboard</string>
-    <string name="dashboard_load_null">Got a null response for "%1$s" dashboard</string>
-    <string name="dashboard_load_failed_parse">Failed to load "%1$s" dashboard</string>
-    <string name="dashboard_too_long">"%1$s" dashboard is too big!</string>
-    <string name="dashboard_bad_item">Incorrect / Disabled</string>
-
-    <string name="async">Asynchronous execution</string>
-
-    <string name="incomplete_settings">Incomplete settings</string>
-    <string name="should_never_happen">This should never happen!</string>
-
-    <string name="not_logged_in">Not logged in</string>
-    <string name="session_expired">Session expired %1$tF %1$tT %1$tZ</string>
-    <string name="session_expires">Session expires %1$tF %1$tT %1$tZ</string>
-    <string name="log_in">Choose a Salt Master to login</string>
-    <string name="logging_in">Logging into "%1$s" as %2$s</string>
-    <string name="logged_in">Successfully logged into "%1$s"</string>
-    <string name="log_in_unexpected_response">Unexpected response during login!</string>
-    <string name="log_in_failed">Login failed: %1$s</string>
-
-    <string name="wrong_client">Client type "%1$s" is not supported!</string>
-    <string name="no_client">No client type found!</string>
-    <string name="no_fun">fun not found!</string>
-    <string name="no_tgt">tgt not found!</string>
-    <string name="pull_for_results">Pull to check for the the results</string>
-    <string name="exec_failed">Failed to run the command!</string>
-    <string name="exec_unexpected_response">Unexpected response during command execution!</string>
-    <string name="job_failed">Failed to run the command!</string>
-    <string name="job_unexpected_response">Failed to check for execution results!</string>
-
-    <string name="logview_runner">Execution of %1$s runner</string>
-    <string name="logview_async">Asynchronous execution of %1$s on %2$s (%3$s) </string>
-    <string name="logview_sync">Synchronous execution of %1$s on %2$s (%3$s) </string>
-    <string name="logview_no_args">" with no arguments"</string>
-    <string name="logview_args">" with following positional arguments: "</string>
-    <string name="logview_kwargs">" with following keyword arguments: "</string>
-
-    <string name="no_result">No result</string>
-    <string name="empty_response">Received an empty response</string>
-
-    <string name="title_minions" translatable="false">Minions</string>
-    <string name="title_cloud" translatable="false">Cloud</string>
-    <string name="title_runners" translatable="false">Runners</string>
-    <string name="title_wheels" translatable="false">Wheels</string>
-
+    <string name="app_name">Namak</string>
+    <string name="action_refresh">Refresh</string>
     <string name="action_settings">Settings</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Select a Salt Master</string>
+    <string name="nav_header_subtitle">Commands will run on the Salt Master</string>
+    <string name="nav_header_desc">What is Navigation header</string>
 
-    <string name="dashboard_item_title" formatted="false">execution of %fun$s on %tgt$s with [no arguments | following arguments: %arg$s]</string>
-
-    <string name="modify">Modify</string>
-    <string name="execute">Execute</string>
-    <string name="set_params">Set Parameters</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="yes">yes</string>
-    <string name="no">no</string>
-    <string name="not_applicable">Not Applicable</string>
-    <!--<string name="title_activity_main">%1$s > %2$s</string>-->
-    <string name="title_activity_general_settings">Settings</string>
-    <string name="title_activity_saltmaster_settings">Salt Master Settings</string>
-    <string name="title_activity_dashboard_settings">Dashboard Settings</string>
-    <string name="title_activity_command_execution">Command Execution</string>
-    <string name="title_activity_command_modification">Command Modification</string>
-
-    <string name="volley_timeout">Timed out</string>
-    <string name="volley_no_connection">No connection could be established</string>
-    <string name="volley_network_error">There was a network error</string> <!-- parent of NoConnectionError -->
-    <string name="volley_auth_failure">There was an authentication failure</string>
-    <string name="volley_server_error">Get a Server Error response</string>
-    <string name="volley_parse_error">Response of the server could not be parsed</string>
+    <string name="dashboards">Dashboards</string>
+    <string name="execution">Execution</string>
+    <string name="settings">Settings</string>
+    <string name="salt_master_settings">Salt Master</string>
+    <string name="share">Share</string>
+    <string name="send">Send</string>
+    <string name="about">About</string>
+    <string name="application_name">Namak</string>
+    <string name="short_description">Salt API dashboard</string>
 </resources>

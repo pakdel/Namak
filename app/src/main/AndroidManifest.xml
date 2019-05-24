@@ -1,82 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amirpakdel.namak">
-
-    <!-- Not used; it is always overridden by the value specified in the Gradle build script -->
-    <!-- android:versionCode="1" -->
-    <!-- android:versionName="1.0"> -->
-
-
-    <!-- Not used; it is always overridden by the value specified in the Gradle build script -->
-    <!-- <uses-sdk -->
-    <!-- android:minSdkVersion="19" -->
-    <!-- android:targetSdkVersion="22" /> -->
+    xmlns:tools="http://schemas.android.com/tools"
+    package="ca.pakdel.namak">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+
 
     <application
-        android:name=".NamakApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".CommandExecutionActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/title_activity_command_execution"
-            android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.amirpakdel.namak.MainActivity" />
-        </activity>
-        <activity
-            android:name=".GeneralSettingsActivity"
-            android:label="@string/title_activity_general_settings"
-            android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.amirpakdel.namak.MainActivity" />
-        </activity>
-        <activity
-            android:name=".SaltMasterSettingsActivity"
-            android:label="@string/title_activity_saltmaster_settings"
-            android:parentActivityName=".GeneralSettingsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.amirpakdel.namak.GeneralSettingsActivity" />
-        </activity>
-        <activity
-            android:name=".DashboardSettingsActivity"
-            android:label="@string/title_activity_dashboard_settings"
-            android:parentActivityName=".GeneralSettingsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.amirpakdel.namak.GeneralSettingsActivity" />
-        </activity>
-
-        <activity
-            android:name=".CommandModificationActivity"
-            android:label="@string/title_activity_command_modification"
-            android:parentActivityName=".CommandExecutionActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.amirpakdel.namak.CommandExecutionActivity" />
+            <!-- This is added to handle a deep link -->
+            <nav-graph android:value="@navigation/nav_graph" />
         </activity>
     </application>
 

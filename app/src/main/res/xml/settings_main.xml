@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="saltmaster_category"
+        android:title="Salt Masters">
+        <!-- Contents of saltmaster_category are populated in onCreatePreferences -->
+        <Preference
+            android:icon="@android:drawable/ic_input_add"
+            android:key="add_saltmaster"
+            android:order="99"
+            android:title="Add Salt Master" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="dashboard_category"
+        android:title="Dashboards">
+        <Preference
+            android:icon="@android:drawable/ic_input_add"
+            android:key="add_dashboard"
+            android:order="99"
+            android:title="Add Dashboard" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="global_category"
+        android:title="Global Settings">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:enabled="false"
+            android:key="auto_execute"
+            android:summary="Execute the command as soon as it is selected"
+            android:title="Auto Execute" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -28,5 +28,15 @@ proguard/
 
 # Android studio files
 /.idea/workspace.xml
+
+# IntelliJ IDEA files
+*.iml
+/.idea/caches
 /.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
 .DS_Store
+/captures
+.externalNativeBuild

@@ -1,8 +1,24 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="@style/NamakTheme">
-        <!-- Customize your theme here. -->
+    <!--  FIXME DrawerLayout over the ActionBar/Toolbar       -->
+    <!--
+    <style title="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/accent</item>
+
+
+<!--  FIXME DrawerLayout over the ActionBar/Toolbar       -->
+<!--
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+-->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
 </resources>

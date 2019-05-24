@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Cannot use the XML, because updating the key after creation does not work!
+         Using PreferenceScreenProvider interface of SaltMaster instead
+         -->
+<!--
+    <EditTextPreference
+        android:defaultValue="Should not happen!"
+        android:key="saltmaster_name"
+        android:title="Name"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        android:defaultValue="Should not happen!"
+        android:key="saltmaster_url"
+        android:title="Base URL"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        android:defaultValue="Should not happen!"
+        android:key="saltmaster_username"
+        android:title="Username"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        android:defaultValue="Should not happen!"
+        android:key="saltmaster_password"
+        android:title="Password"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="********"
+        app:useSimpleSummaryProvider="false" />
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/auth_backends"
+        android:entryValues="@array/auth_backends"
+        android:key="saltmaster_auth_backend"
+        android:title="Authentication backend"
+        app:useSimpleSummaryProvider="true" />
+-->
+    <Preference
+        android:icon="@android:drawable/ic_menu_delete"
+        android:key="saltmaster_forget"
+        android:order="99"
+        android:title="Remove and Forget" />
+</PreferenceScreen>
