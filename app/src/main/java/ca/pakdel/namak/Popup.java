@@ -28,6 +28,13 @@ class Popup {
                 .show();
     }
 
+    /*
+    @NonNull
+    public final String getString(@StringRes int resId, Object... formatArgs) {
+        return getResources().getString(resId, formatArgs);
+    }
+    */
+
     public static void error(@NonNull Exception error) {
         error.printStackTrace();
         Log.e("Namak", "error: ", error);
