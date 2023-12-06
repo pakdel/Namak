@@ -1,6 +1,10 @@
 # Namak
 Salt Net API client
 
+## Privacy Policy
+Namak does not collect any data.
+
+## Opt-in
 Here is the Alpha testing opt-in link: https://play.google.com/apps/testing/com.amirpakdel.namak
 
 Sample Dashboards:
