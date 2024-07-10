@@ -13,6 +13,8 @@ import android.preference.PreferenceScreen;
 import java.util.HashSet;
 import java.util.Set;
 
+import Namak.R;
+
 public class GeneralSettingsActivity extends NamakSettingsActivity {
     protected static Activity activity;
 

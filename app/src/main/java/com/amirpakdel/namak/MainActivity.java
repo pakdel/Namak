@@ -26,6 +26,7 @@ import android.widget.TextView;
 import java.util.Date;
 import java.util.HashSet;
 
+import Namak.R;
 
 public class MainActivity extends AppCompatActivity
         implements SwipeRefreshLayout.OnRefreshListener,

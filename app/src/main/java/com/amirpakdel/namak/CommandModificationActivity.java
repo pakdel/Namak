@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.List;
 
+import Namak.R;
+
 public class CommandModificationActivity extends AppCompatActivity {
 
     public static final String COMMAND_JSON = "command_json";

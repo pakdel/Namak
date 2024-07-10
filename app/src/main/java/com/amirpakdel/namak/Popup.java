@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import Namak.R;
+
 public class Popup {
     private static final String helpPageURL = NamakApplication.getAppContext().getString(R.string.helpPageURL);
     private static int veryLongDuration = 8000; // Snackbar.LENGTH_LONG

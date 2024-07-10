@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import Namak.R;
+
 abstract public class NamakSettingsActivity extends AppCompatActivity {
     private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override

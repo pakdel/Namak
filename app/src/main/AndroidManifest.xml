@@ -1,79 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amirpakdel.namak">
-
-    <!-- Not used; it is always overridden by the value specified in the Gradle build script -->
-    <!-- android:versionCode="1" -->
-    <!-- android:versionName="1.0"> -->
-
-
-    <!-- Not used; it is always overridden by the value specified in the Gradle build script -->
-    <!-- <uses-sdk -->
-    <!-- android:minSdkVersion="19" -->
-    <!-- android:targetSdkVersion="22" /> -->
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"    >
     <uses-permission android:name="android.permission.INTERNET" />
     <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
     <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
     <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
 
     <application
-        android:name=".NamakApplication"
-        android:allowBackup="true"
+        android:name="com.amirpakdel.namak.NamakApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.amirpakdel.namak.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/app_name"
             android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
-            android:name=".CommandExecutionActivity"
+            android:name="com.amirpakdel.namak.CommandExecutionActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_command_execution"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.amirpakdel.namak.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amirpakdel.namak.MainActivity" />
         </activity>
         <activity
-            android:name=".GeneralSettingsActivity"
+            android:name="com.amirpakdel.namak.GeneralSettingsActivity"
             android:label="@string/title_activity_general_settings"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.amirpakdel.namak.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amirpakdel.namak.MainActivity" />
         </activity>
         <activity
-            android:name=".SaltMasterSettingsActivity"
+            android:name="com.amirpakdel.namak.SaltMasterSettingsActivity"
             android:label="@string/title_activity_saltmaster_settings"
-            android:parentActivityName=".GeneralSettingsActivity">
+            android:parentActivityName="com.amirpakdel.namak.GeneralSettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amirpakdel.namak.GeneralSettingsActivity" />
         </activity>
         <activity
-            android:name=".DashboardSettingsActivity"
+            android:name="com.amirpakdel.namak.DashboardSettingsActivity"
             android:label="@string/title_activity_dashboard_settings"
-            android:parentActivityName=".GeneralSettingsActivity">
+            android:parentActivityName="com.amirpakdel.namak.GeneralSettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amirpakdel.namak.GeneralSettingsActivity" />
         </activity>
 
         <activity
-            android:name=".CommandModificationActivity"
+            android:name="com.amirpakdel.namak.CommandModificationActivity"
             android:label="@string/title_activity_command_modification"
-            android:parentActivityName=".CommandExecutionActivity">
+            android:parentActivityName="com.amirpakdel.namak.CommandExecutionActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amirpakdel.namak.CommandExecutionActivity" />

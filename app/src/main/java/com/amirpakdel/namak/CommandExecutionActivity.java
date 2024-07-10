@@ -27,6 +27,9 @@ import com.android.volley.VolleyError;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import Namak.R;
+
 // TODO Translate commandMsg
 
 public class CommandExecutionActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {

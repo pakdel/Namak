@@ -11,6 +11,8 @@ import android.preference.PreferenceScreen;
 import java.util.HashSet;
 import java.util.Set;
 
+import Namak.R;
+
 public class DashboardSettingsActivity extends NamakSettingsActivity {
     public static final String DASHBOARD_ID = "dashboard_id";
     private static final String[] PREF_SUFFIXES = {/*"name", */"url"};

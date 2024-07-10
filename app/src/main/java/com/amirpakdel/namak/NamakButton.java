@@ -4,6 +4,8 @@ import android.content.Context;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import Namak.R;
+
 public class NamakButton extends Button {
     private static final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,

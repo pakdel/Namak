@@ -14,6 +14,8 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import Namak.R;
+
 public class DashboardAdapter extends BaseExpandableListAdapter {
     private final Context context;
     private final int horizontal_padding, horizontal_padding_large, vertical_padding;

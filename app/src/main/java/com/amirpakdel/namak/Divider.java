@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import Namak.R;
+
 public class Divider extends View {
 
     public Divider(Context context) {

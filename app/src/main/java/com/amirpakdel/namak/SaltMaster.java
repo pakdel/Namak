@@ -19,6 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
+import Namak.R;
+
 public class SaltMaster {
     private int mTimeout;
     private String mId;

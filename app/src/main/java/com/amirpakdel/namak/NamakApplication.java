@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import Namak.R;
+
 public class NamakApplication extends android.app.Application {
     private static Context context;
     private static SharedPreferences pref;
